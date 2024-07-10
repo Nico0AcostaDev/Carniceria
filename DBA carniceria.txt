@@ -1,0 +1,81 @@
+CREATE TABLE productos (
+    id_producto INT IDENTITY(1,1) PRIMARY KEY,
+    nombre_producto VARCHAR(255) NOT NULL,
+    precio DECIMAL(10, 2),
+    stock INT,
+    cod_estado VARCHAR(1) NOT NULL
+);
+
+CREATE TABLE cortes ( 
+    id_corte INT IDENTITY(1,1) PRIMARY KEY,
+    nombre_corte VARCHAR(255) NOT NULL,
+    precio_kg DECIMAL(10, 2),
+	stock INT,
+    cod_estado VARCHAR(1) NOT NULL
+);
+
+CREATE TABLE clientes ( 
+    id_cliente INT IDENTITY(1,1) PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    telefono VARCHAR(20),
+    direccion VARCHAR(255),
+    email VARCHAR(50),
+    info_relevante VARCHAR(255),
+    fecha_registro DATETIME,
+    cod_estado VARCHAR(1) NOT NULL
+);
+ 
+CREATE TABLE detalle_deuda_cortes (
+    id_detalle_corte INT IDENTITY(1,1) PRIMARY KEY,
+    id_deuda INT,
+    id_corte INT,
+	kilos DECIMAL(10, 2) NOT NULL,
+    monto_corte DECIMAL(10, 2) NOT NULL 
+);
+
+CREATE TABLE detalle_deuda_productos (
+    id_deuda_producto  INT IDENTITY(1,1) PRIMARY KEY,
+    id_deuda INT,
+    id_producto INT,
+    cantidad INT NOT NULL,
+    monto_producto DECIMAL(10, 2) NOT NULL 
+); 
+ 
+CREATE TABLE deudas (
+    id_deuda INT IDENTITY(1,1) PRIMARY KEY,
+    id_cliente INT NOT NULL, 
+    fecha_deuda DATE NOT NULL,
+	total DECIMAL(10, 2) NOT NULL 
+);
+
+CREATE TABLE deuda_total (
+	id_cliente INT PRIMARY KEY, 
+	total_deuda DECIMAL(10, 2) NOT NULL,
+	fecha_ult_act DATETIME
+);
+
+CREATE TABLE pagos (
+    id_pago INT IDENTITY(1,1) PRIMARY KEY,
+	monto_pagado DECIMAL(10, 2) NOT NULL,
+	info_relevante VARCHAR(255),
+    id_cliente INT NOT NULL
+);
+ 
+ 
+ALTER TABLE deudas
+ADD CONSTRAINT FK_Deudas_Clientes FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente);
+
+ALTER TABLE detalle_deuda_cortes
+ADD CONSTRAINT FK_DetalleDeudaCortes_Deudas FOREIGN KEY (id_deuda) REFERENCES deudas(id_deuda),
+ADD CONSTRAINT FK_DetalleDeudaCortes_Cortes FOREIGN KEY (id_corte) REFERENCES cortes(id_corte);
+
+ALTER TABLE detalle_deuda_productos
+ADD CONSTRAINT FK_DetalleDeudaProductos_Deudas FOREIGN KEY (id_deuda) REFERENCES deudas(id_deuda),
+ADD CONSTRAINT FK_DetalleDeudaProductos_Productos FOREIGN KEY (id_producto) REFERENCES productos(id_producto);
+
+ALTER TABLE deuda_total
+ADD CONSTRAINT FK_DeudaTotal_Clientes FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente);
+
+ALTER TABLE pagos
+ADD CONSTRAINT FK_Pagos_Clientes FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente);
