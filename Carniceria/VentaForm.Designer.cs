@@ -35,8 +35,6 @@
             dgvVenta = new DataGridView();
             label3 = new Label();
             panel1 = new Panel();
-            label_producto = new Label();
-            label7 = new Label();
             label5 = new Label();
             button4 = new Button();
             button2 = new Button();
@@ -73,9 +71,13 @@
             // 
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductos.Location = new Point(12, 65);
+            dgvProductos.MultiSelect = false;
             dgvProductos.Name = "dgvProductos";
+            dgvProductos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvProductos.Size = new Size(437, 402);
             dgvProductos.TabIndex = 2;
+            dgvProductos.CellClick += dgvProductos_CellClick;
+            dgvProductos.CellContentClick += dgvProductos_CellContentClick;
             // 
             // label2
             // 
@@ -91,7 +93,7 @@
             dgvVenta.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvVenta.Location = new Point(508, 63);
             dgvVenta.Name = "dgvVenta";
-            dgvVenta.Size = new Size(383, 168);
+            dgvVenta.Size = new Size(446, 168);
             dgvVenta.TabIndex = 4;
             // 
             // label3
@@ -105,8 +107,6 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(label_producto);
-            panel1.Controls.Add(label7);
             panel1.Controls.Add(label5);
             panel1.Controls.Add(button4);
             panel1.Controls.Add(button2);
@@ -118,26 +118,8 @@
             panel1.Controls.Add(textBox2);
             panel1.Location = new Point(508, 249);
             panel1.Name = "panel1";
-            panel1.Size = new Size(383, 152);
+            panel1.Size = new Size(446, 152);
             panel1.TabIndex = 25;
-            // 
-            // label_producto
-            // 
-            label_producto.AutoSize = true;
-            label_producto.Location = new Point(98, 72);
-            label_producto.Name = "label_producto";
-            label_producto.Size = new Size(86, 15);
-            label_producto.TabIndex = 29;
-            label_producto.Text = "label_producto";
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(5, 72);
-            label7.Name = "label7";
-            label7.Size = new Size(85, 15);
-            label7.TabIndex = 28;
-            label7.Text = "Tipo Producto:";
             // 
             // label5
             // 
@@ -150,26 +132,28 @@
             // 
             // button4
             // 
-            button4.Location = new Point(26, 113);
+            button4.Location = new Point(17, 110);
             button4.Name = "button4";
             button4.Size = new Size(89, 26);
             button4.TabIndex = 26;
             button4.Text = "Limpiar";
             button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
             // 
             // button2
             // 
-            button2.Location = new Point(258, 113);
+            button2.Location = new Point(318, 110);
             button2.Name = "button2";
             button2.Size = new Size(107, 26);
             button2.TabIndex = 24;
             button2.Text = "Añadir";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(217, 67);
+            label6.Location = new Point(244, 72);
             label6.Name = "label6";
             label6.Size = new Size(87, 15);
             label6.TabIndex = 22;
@@ -177,9 +161,9 @@
             // 
             // textBox4
             // 
-            textBox4.Location = new Point(310, 64);
+            textBox4.Location = new Point(337, 69);
             textBox4.Name = "textBox4";
-            textBox4.Size = new Size(68, 23);
+            textBox4.Size = new Size(88, 23);
             textBox4.TabIndex = 21;
             // 
             // label4
@@ -194,7 +178,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(217, 37);
+            label8.Location = new Point(244, 34);
             label8.Name = "label8";
             label8.Size = new Size(58, 15);
             label8.TabIndex = 16;
@@ -202,21 +186,22 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(310, 37);
+            textBox1.Location = new Point(337, 34);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(68, 23);
+            textBox1.Size = new Size(88, 23);
             textBox1.TabIndex = 15;
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(98, 34);
+            textBox2.Enabled = false;
+            textBox2.Location = new Point(87, 34);
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(113, 23);
             textBox2.TabIndex = 17;
             // 
             // btnAceptar
             // 
-            btnAceptar.Location = new Point(782, 429);
+            btnAceptar.Location = new Point(845, 429);
             btnAceptar.Name = "btnAceptar";
             btnAceptar.Size = new Size(109, 38);
             btnAceptar.TabIndex = 24;
@@ -227,7 +212,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(900, 479);
+            ClientSize = new Size(985, 479);
             Controls.Add(panel1);
             Controls.Add(btnAceptar);
             Controls.Add(label3);
@@ -266,7 +251,5 @@
         private TextBox textBox2;
         private Button btnAceptar;
         private Label label5;
-        private Label label_producto;
-        private Label label7;
     }
 }
