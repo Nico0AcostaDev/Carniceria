@@ -26,5 +26,6 @@ public partial class CarniceriaContext : DbContext
 
         return new CarniceriaContext(optionsBuilder.Options);
     }
+
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

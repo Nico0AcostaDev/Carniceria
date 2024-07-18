@@ -1,6 +1,9 @@
 ﻿using Carniceria.Dto;
 using Carniceria.Models;
+using Microsoft.IdentityModel.Tokens;
 using System.Data;
+using System.Windows.Forms;
+
 namespace Carniceria
 {
     public partial class VentaForm : Form
@@ -8,9 +11,11 @@ namespace Carniceria
         private readonly CarniceriaContext _dbcontext;
         private DataTable dtProductos = new DataTable();
         private DataTable dtDgvVenta = new DataTable();
-        private DeudaRegistradaDTO deuda = new DeudaRegistradaDTO(); 
+        private DeudaRegistradaDTO deuda = new DeudaRegistradaDTO();
         private List<ProductoDto> productList = new List<ProductoDto>();
         private string nombre_producto = "";
+        private int id_cliente = new int();
+        private decimal total = new decimal();
         private string tipo = "";
         private int producto_id = new int();
         public VentaForm(CarniceriaContext dbcontext)
@@ -35,7 +40,9 @@ namespace Carniceria
         private void ajustesFormatoDiseñoDgv()
         {
             dgvProductos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvProductos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvProductos.AllowUserToAddRows = false;
+            dgvProductos.MultiSelect = false;
             dgvProductos.Columns[0].Visible = false;
         }
         private async void CargarGridAndCombo()
@@ -52,7 +59,7 @@ namespace Carniceria
 
             foreach (var cli in clientes)
             {
-                dataSource.Add(new ClienteDTO() { Nombre = cli.nombre });
+                dataSource.Add(new ClienteDTO() { Nombre = cli.nombre, IdCliente = cli.id_cliente });
             }
 
             //Setup data binding
@@ -97,35 +104,38 @@ namespace Carniceria
             textBox4.Text = "";
         }
         private void button2_Click(object sender, EventArgs e)
-        {  
+        {
             ProductoDto producto = new ProductoDto();
+
+            if (!validarCarrito(textBox1.Text, textBox2.Text, textBox4.Text))
+                return;
 
             producto.precio_unitario = Convert.ToDecimal(textBox4.Text);
 
             // C es igual a carnes... logica para detectar cantidades o kilos
-            if(tipo == "C")
+            if (tipo == "C")
             {
-                if(textBox1.Text.Length == 3)
+                if (textBox1.Text.Length == 3)
                 {
-                   MessageBox.Show($"Se debe ingresar expresado en kilogramos... 2 o 4 digitos...", "Atencion!", MessageBoxButtons.OK);
+                    MessageBox.Show($"Se debe ingresar expresado en kilogramos... 2 o 4 digitos...", "Atencion!", MessageBoxButtons.OK);
                 }
                 else if (textBox1.Text.Length > 2)//si los digitos son mayor a 2... por ejemplo 1200 es decir, kilo 200
                 {
                     producto.kilos = Convert.ToDecimal(textBox1.Text) / 1000m;
                     producto.subtotal = producto.precio_unitario * producto.kilos;
-                }                
+                }
                 else
                 {
                     producto.kilos = Convert.ToDecimal(textBox1.Text);
                     producto.subtotal = producto.precio_unitario * producto.kilos;
                 }
-            } 
+            }
             else
             {
                 producto.cantidad = Convert.ToInt32(textBox1.Text);
                 producto.subtotal = producto.precio_unitario * producto.cantidad;
-            } 
-            
+            }
+
             producto.nombre_producto = nombre_producto;
             producto.idProducto = producto_id;
 
@@ -145,7 +155,71 @@ namespace Carniceria
         public void addCompraToGrid(ProductoDto producto)
         {
             productList.Add(producto);
-            dtDgvVenta.Rows.Add(producto.nombre_producto, producto.cantidad,producto.kilos, producto.precio_unitario, producto.subtotal);
+            dtDgvVenta.Rows.Add(producto.nombre_producto, producto.cantidad, producto.kilos, producto.precio_unitario, producto.subtotal);
+        }
+
+        private bool validarCarrito(string cantidad, string producto, string precioUnitario)
+        {
+            bool valida = true;
+            if (string.IsNullOrEmpty(cantidad))
+            {
+                MessageBox.Show($"No hay ningun producto a cobrar...", "Atencion!", MessageBoxButtons.OK);
+                valida = false;
+            }
+
+            if (string.IsNullOrEmpty(precioUnitario))
+            {
+                MessageBox.Show($"No hay monto a cobrar, por favor, insertar uno correcto", "Atencion!", MessageBoxButtons.OK);
+                valida = false;
+            }
+
+            if (string.IsNullOrEmpty(producto))
+            {
+                MessageBox.Show($"No hay producto asociado", "Atencion!", MessageBoxButtons.OK);
+                valida = false;
+            }
+
+            return valida;
+        }
+
+        private async void btnAceptar_Click(object sender, EventArgs e)
+        {
+            id_cliente = (int)this.comboBox1.SelectedValue;
+
+            if (string.IsNullOrEmpty(id_cliente.ToString()))
+            {
+                MessageBox.Show($"Debemos seleccionar un cliente", "Atencion!", MessageBoxButtons.OK);
+                return;
+            }
+
+            foreach (var pd in productList)
+            {
+                total = +pd.subtotal;
+            }
+
+            DialogResult result = MessageBox.Show(
+                $"El total de la deuda es ${total} pesos",
+                "Confirmación",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                OutputParameter<int?> id_deuda = new OutputParameter<int?>();
+                await _dbcontext.Procedures.sp_insertar_deudaAsync(id_cliente, total, id_deuda);
+
+                foreach (var pdl in productList)
+                {
+                    await _dbcontext.Procedures.sp_insertar_deuda_detalleAsync(id_deuda._value, pdl.idProducto, pdl.kilos, pdl.cantidad, pdl.subtotal);
+                }
+            }
+            this.Close();
+        }
+
+        private void dgvProductos_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+
         }
     }
 }

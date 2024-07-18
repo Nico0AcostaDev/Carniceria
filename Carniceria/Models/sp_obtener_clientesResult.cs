@@ -15,5 +15,6 @@ namespace Carniceria.Models
         public string email { get; set; }
         public string info_relevante { get; set; }
         public DateTime? fecha_registro { get; set; }
+        public string cod_estado { get; set; }
     }
 }

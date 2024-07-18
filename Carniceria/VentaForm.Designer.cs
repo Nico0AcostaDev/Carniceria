@@ -78,6 +78,7 @@
             dgvProductos.TabIndex = 2;
             dgvProductos.CellClick += dgvProductos_CellClick;
             dgvProductos.CellContentClick += dgvProductos_CellContentClick;
+            dgvProductos.CellMouseClick += dgvProductos_CellMouseClick;
             // 
             // label2
             // 
@@ -207,6 +208,7 @@
             btnAceptar.TabIndex = 24;
             btnAceptar.Text = "Finalizar Venta";
             btnAceptar.UseVisualStyleBackColor = true;
+            btnAceptar.Click += btnAceptar_Click;
             // 
             // VentaForm
             // 

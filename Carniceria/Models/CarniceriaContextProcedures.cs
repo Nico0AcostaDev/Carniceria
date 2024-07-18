@@ -48,6 +48,103 @@ namespace Carniceria.Models
             _context = context;
         }
 
+        public virtual async Task<int> sp_insertar_deudaAsync(int? id_cliente, decimal? total, OutputParameter<int?> id_deuda, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterid_deuda = new SqlParameter
+            {
+                ParameterName = "id_deuda",
+                Direction = System.Data.ParameterDirection.InputOutput,
+                Value = id_deuda?._value ?? Convert.DBNull,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                new SqlParameter
+                {
+                    ParameterName = "id_cliente",
+                    Value = id_cliente ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "total",
+                    Precision = 10,
+                    Scale = 2,
+                    Value = total ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Decimal,
+                },
+                parameterid_deuda,
+                parameterreturnValue,
+            };
+            var _ = await _context.Database.ExecuteSqlRawAsync("EXEC @returnValue = [dbo].[sp_insertar_deuda] @id_cliente, @total, @id_deuda OUTPUT", sqlParameters, cancellationToken);
+
+            id_deuda.SetValue(parameterid_deuda.Value);
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
+        public virtual async Task<int> sp_insertar_deuda_detalleAsync(int? id_deuda, int? id_producto, decimal? kilos, int? cantidad, decimal? monto_producto, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                new SqlParameter
+                {
+                    ParameterName = "id_deuda",
+                    Value = id_deuda ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "id_producto",
+                    Value = id_producto ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "kilos",
+                    Precision = 10,
+                    Scale = 2,
+                    Value = kilos ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Decimal,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "cantidad",
+                    Value = cantidad ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "monto_producto",
+                    Precision = 10,
+                    Scale = 2,
+                    Value = monto_producto ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Decimal,
+                },
+                parameterreturnValue,
+            };
+            var _ = await _context.Database.ExecuteSqlRawAsync("EXEC @returnValue = [dbo].[sp_insertar_deuda_detalle] @id_deuda, @id_producto, @kilos, @cantidad, @monto_producto", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
         public virtual async Task<List<sp_obtener_clientesResult>> sp_obtener_clientesAsync(OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
         {
             var parameterreturnValue = new SqlParameter
