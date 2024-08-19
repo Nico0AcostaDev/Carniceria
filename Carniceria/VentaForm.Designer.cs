@@ -223,6 +223,7 @@
             Controls.Add(dgvProductos);
             Controls.Add(label1);
             Controls.Add(comboBox1);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Name = "VentaForm";
             Text = "VentaForm";
             Load += VentaForm_Load;

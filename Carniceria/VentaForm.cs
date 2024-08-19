@@ -1,8 +1,8 @@
 ﻿using Carniceria.Dto;
 using Carniceria.Models;
-using Microsoft.IdentityModel.Tokens;
 using System.Data;
-using System.Windows.Forms;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Carniceria
 {
@@ -11,7 +11,6 @@ namespace Carniceria
         private readonly CarniceriaContext _dbcontext;
         private DataTable dtProductos = new DataTable();
         private DataTable dtDgvVenta = new DataTable();
-        private DeudaRegistradaDTO deuda = new DeudaRegistradaDTO();
         private List<ProductoDto> productList = new List<ProductoDto>();
         private string nombre_producto = "";
         private int id_cliente = new int();
@@ -44,6 +43,19 @@ namespace Carniceria
             dgvProductos.AllowUserToAddRows = false;
             dgvProductos.MultiSelect = false;
             dgvProductos.Columns[0].Visible = false;
+
+            dgvProductos.AllowUserToOrderColumns = false;
+            dgvProductos.AllowUserToResizeColumns = false;
+            dgvProductos.AllowUserToResizeRows = false;
+
+            dgvVenta.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvVenta.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvVenta.AllowUserToAddRows = false;
+            dgvVenta.MultiSelect = false;
+
+            dgvVenta.AllowUserToOrderColumns = false;
+            dgvVenta.AllowUserToResizeColumns = false;
+            dgvVenta.AllowUserToResizeRows = false;
         }
         private async void CargarGridAndCombo()
         {
@@ -115,25 +127,36 @@ namespace Carniceria
             // C es igual a carnes... logica para detectar cantidades o kilos
             if (tipo == "C")
             {
-                if (textBox1.Text.Length == 3)
+                int length = textBox1.Text.Length;
+                if (!Regex.IsMatch(textBox1.Text, @"^\d*$"))
                 {
-                    MessageBox.Show($"Se debe ingresar expresado en kilogramos... 2 o 4 digitos...", "Atencion!", MessageBoxButtons.OK);
+                    MessageBox.Show("Solo se permiten números."); 
+                    return;
                 }
-                else if (textBox1.Text.Length > 2)//si los digitos son mayor a 2... por ejemplo 1200 es decir, kilo 200
+                if (length == 2 || length == 1)
                 {
-                    producto.kilos = Convert.ToDecimal(textBox1.Text) / 1000m;
-                    producto.subtotal = producto.precio_unitario * producto.kilos;
+                    string value = textBox1.Text + ".00";
+                    producto.kilos  = Convert.ToDecimal(value, CultureInfo.InvariantCulture);
+                    producto.subtotal = Math.Round(producto.precio_unitario * producto.kilos, 2);  
                 }
-                else
+                else if (length == 4)
                 {
-                    producto.kilos = Convert.ToDecimal(textBox1.Text);
-                    producto.subtotal = producto.precio_unitario * producto.kilos;
+                    string value = textBox1.Text.Insert(1, ".");
+                    producto.kilos = Convert.ToDecimal(value, CultureInfo.InvariantCulture);
+                    producto.subtotal = Math.Round(producto.precio_unitario * producto.kilos, 2);
                 }
+                else if (length == 0 || length != 2 || length != 4) // If the length is not 2 or 4, show an error
+                {
+                    MessageBox.Show("Longitud no válida.", "Atencion!", MessageBoxButtons.OK);
+                    return;  
+                } 
             }
             else
             {
+                //string value = textBox1.Text + ".00"; 
+                //var value2  = Convert.ToDecimal(value, CultureInfo.InvariantCulture);
                 producto.cantidad = Convert.ToInt32(textBox1.Text);
-                producto.subtotal = producto.precio_unitario * producto.cantidad;
+                producto.subtotal = Math.Round(producto.precio_unitario * producto.cantidad);
             }
 
             producto.nombre_producto = nombre_producto;
@@ -194,7 +217,7 @@ namespace Carniceria
 
             foreach (var pd in productList)
             {
-                total = +pd.subtotal;
+                total += pd.subtotal;
             }
 
             DialogResult result = MessageBox.Show(
@@ -208,9 +231,10 @@ namespace Carniceria
             {
                 OutputParameter<int?> id_deuda = new OutputParameter<int?>();
                 await _dbcontext.Procedures.sp_insertar_deudaAsync(id_cliente, total, id_deuda);
-
+                decimal acumulador = 0m;
                 foreach (var pdl in productList)
                 {
+                    acumulador += pdl.subtotal;
                     await _dbcontext.Procedures.sp_insertar_deuda_detalleAsync(id_deuda._value, pdl.idProducto, pdl.kilos, pdl.cantidad, pdl.subtotal);
                 }
             }

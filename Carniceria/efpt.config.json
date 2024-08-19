@@ -24,7 +24,19 @@
          "ObjectType": 1
       },
       {
+         "Name": "[dbo].[sp_insertar_pago]",
+         "ObjectType": 1
+      },
+      {
          "Name": "[dbo].[sp_obtener_clientes]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[sp_obtener_detalle_deuda]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[sp_obtener_deuda]",
          "ObjectType": 1
       },
       {

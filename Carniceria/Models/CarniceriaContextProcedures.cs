@@ -34,7 +34,10 @@ namespace Carniceria.Models
 
         protected void OnModelCreatingGeneratedProcedures(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<sp_insertar_pagoResult>().HasNoKey().ToView(null);
             modelBuilder.Entity<sp_obtener_clientesResult>().HasNoKey().ToView(null);
+            modelBuilder.Entity<sp_obtener_detalle_deudaResult>().HasNoKey().ToView(null);
+            modelBuilder.Entity<sp_obtener_deudaResult>().HasNoKey().ToView(null);
             modelBuilder.Entity<sp_obtener_productosResult>().HasNoKey().ToView(null);
         }
     }
@@ -145,6 +148,40 @@ namespace Carniceria.Models
             return _;
         }
 
+        public virtual async Task<List<sp_insertar_pagoResult>> sp_insertar_pagoAsync(int? id_deuda, decimal? monto_pagado, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                new SqlParameter
+                {
+                    ParameterName = "id_deuda",
+                    Value = id_deuda ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "monto_pagado",
+                    Precision = 10,
+                    Scale = 2,
+                    Value = monto_pagado ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Decimal,
+                },
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<sp_insertar_pagoResult>("EXEC @returnValue = [dbo].[sp_insertar_pago] @id_deuda, @monto_pagado", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
         public virtual async Task<List<sp_obtener_clientesResult>> sp_obtener_clientesAsync(OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
         {
             var parameterreturnValue = new SqlParameter
@@ -159,6 +196,52 @@ namespace Carniceria.Models
                 parameterreturnValue,
             };
             var _ = await _context.SqlQueryAsync<sp_obtener_clientesResult>("EXEC @returnValue = [dbo].[sp_obtener_clientes]", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
+        public virtual async Task<List<sp_obtener_detalle_deudaResult>> sp_obtener_detalle_deudaAsync(int? id_deuda, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                new SqlParameter
+                {
+                    ParameterName = "id_deuda",
+                    Value = id_deuda ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<sp_obtener_detalle_deudaResult>("EXEC @returnValue = [dbo].[sp_obtener_detalle_deuda] @id_deuda", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
+        public virtual async Task<List<sp_obtener_deudaResult>> sp_obtener_deudaAsync(OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<sp_obtener_deudaResult>("EXEC @returnValue = [dbo].[sp_obtener_deuda]", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 

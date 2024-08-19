@@ -32,8 +32,6 @@
             ventasToolStripMenuItem = new ToolStripMenuItem();
             generarVentaToolStripMenuItem = new ToolStripMenuItem();
             deudasToolStripMenuItem = new ToolStripMenuItem();
-            deudasParcialesToolStripMenuItem = new ToolStripMenuItem();
-            deudasCanceladasToolStripMenuItem = new ToolStripMenuItem();
             deudasParcialesToolStripMenuItem1 = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
@@ -57,34 +55,23 @@
             // generarVentaToolStripMenuItem
             // 
             generarVentaToolStripMenuItem.Name = "generarVentaToolStripMenuItem";
-            generarVentaToolStripMenuItem.Size = new Size(180, 22);
+            generarVentaToolStripMenuItem.Size = new Size(147, 22);
             generarVentaToolStripMenuItem.Text = "Generar Venta";
             generarVentaToolStripMenuItem.Click += generarVentaToolStripMenuItem_Click;
             // 
             // deudasToolStripMenuItem
             // 
-            deudasToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { deudasParcialesToolStripMenuItem, deudasCanceladasToolStripMenuItem, deudasParcialesToolStripMenuItem1 });
+            deudasToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { deudasParcialesToolStripMenuItem1 });
             deudasToolStripMenuItem.Name = "deudasToolStripMenuItem";
             deudasToolStripMenuItem.Size = new Size(58, 20);
             deudasToolStripMenuItem.Text = "Deudas";
-            // 
-            // deudasParcialesToolStripMenuItem
-            // 
-            deudasParcialesToolStripMenuItem.Name = "deudasParcialesToolStripMenuItem";
-            deudasParcialesToolStripMenuItem.Size = new Size(180, 22);
-            deudasParcialesToolStripMenuItem.Text = "Deudas Activas";
-            // 
-            // deudasCanceladasToolStripMenuItem
-            // 
-            deudasCanceladasToolStripMenuItem.Name = "deudasCanceladasToolStripMenuItem";
-            deudasCanceladasToolStripMenuItem.Size = new Size(180, 22);
-            deudasCanceladasToolStripMenuItem.Text = "Deudas Canceladas";
             // 
             // deudasParcialesToolStripMenuItem1
             // 
             deudasParcialesToolStripMenuItem1.Name = "deudasParcialesToolStripMenuItem1";
             deudasParcialesToolStripMenuItem1.Size = new Size(180, 22);
-            deudasParcialesToolStripMenuItem1.Text = "Deudas Parciales";
+            deudasParcialesToolStripMenuItem1.Text = "Deudas y Pagos";
+            deudasParcialesToolStripMenuItem1.Click += deudasParcialesToolStripMenuItem1_Click;
             // 
             // MainForm
             // 
@@ -92,6 +79,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(menuStrip1);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             MainMenuStrip = menuStrip1;
             Name = "MainForm";
             Text = "Form1";
@@ -107,8 +95,6 @@
         private ToolStripMenuItem ventasToolStripMenuItem;
         private ToolStripMenuItem generarVentaToolStripMenuItem;
         private ToolStripMenuItem deudasToolStripMenuItem;
-        private ToolStripMenuItem deudasParcialesToolStripMenuItem;
-        private ToolStripMenuItem deudasCanceladasToolStripMenuItem;
         private ToolStripMenuItem deudasParcialesToolStripMenuItem1;
     }
 }

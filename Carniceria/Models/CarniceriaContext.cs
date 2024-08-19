@@ -2,7 +2,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using Carniceria.DataAccess;
 using Microsoft.EntityFrameworkCore;
 
 namespace Carniceria.Models;
@@ -19,10 +18,10 @@ public partial class CarniceriaContext : DbContext
         OnModelCreatingGeneratedProcedures(modelBuilder);
         OnModelCreatingPartial(modelBuilder);
     }
-    public static CarniceriaContext CreateDbContext()
+    public static CarniceriaContext CreateDbContext(string connectionString)
     {
         var optionsBuilder = new DbContextOptionsBuilder<CarniceriaContext>();
-        optionsBuilder.UseSqlServer(Connect.ConnectionString());
+        optionsBuilder.UseSqlServer(connectionString);
 
         return new CarniceriaContext(optionsBuilder.Options);
     }

@@ -1,4 +1,10 @@
+using Carniceria.Dto;
 using Carniceria.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Carniceria
 {
@@ -10,11 +16,19 @@ namespace Carniceria
         [STAThread]
         static void Main()
         {
-            CarniceriaContext dbContext = CarniceriaContext.CreateDbContext();
+            string connectionString = "";
+            var prueba = @"C:\Users\vamoooooo\Desktop\Carniceria\appsettings.json";
 
+            using (StreamReader r = new StreamReader(prueba))
+            {
+                    string json = r.ReadToEnd();
+                    var desc = JsonSerializer.Deserialize<jsonFile>(json);
+                    connectionString = desc.ConnectionString;
+            } 
+            CarniceriaContext dbContext = CarniceriaContext.CreateDbContext(connectionString);
 
-            ApplicationConfiguration.Initialize();
+            ApplicationConfiguration.Initialize(); 
             Application.Run(new MainForm(dbContext));
-        }
+        } 
     }
 }

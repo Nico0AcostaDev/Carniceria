@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Carniceria")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9b4082a7ecec936e7b3dfe09cd03e50cd32db9f7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f338d13157605a9ace44966ba0abbde497a97b6e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Carniceria")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Carniceria")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
