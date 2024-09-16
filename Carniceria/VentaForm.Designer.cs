@@ -166,6 +166,7 @@
             textBox4.Name = "textBox4";
             textBox4.Size = new Size(88, 23);
             textBox4.TabIndex = 21;
+            textBox4.TextChanged += textBox4_TextChanged;
             // 
             // label4
             // 
@@ -191,6 +192,7 @@
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(88, 23);
             textBox1.TabIndex = 15;
+            textBox1.TextChanged += textBox1_TextChanged;
             // 
             // textBox2
             // 

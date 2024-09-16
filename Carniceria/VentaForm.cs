@@ -122,39 +122,30 @@ namespace Carniceria
             if (!validarCarrito(textBox1.Text, textBox2.Text, textBox4.Text))
                 return;
 
-            producto.precio_unitario = Convert.ToDecimal(textBox4.Text);
+            producto.precio_unitario = Convert.ToDecimal(textBox4.Text.Replace(",","")); 
 
             // C es igual a carnes... logica para detectar cantidades o kilos
             if (tipo == "C")
             {
                 int length = textBox1.Text.Length;
-                if (!Regex.IsMatch(textBox1.Text, @"^\d*$"))
+
+                if (!Regex.IsMatch(textBox1.Text, @"^\d{1,3}(,\d{3})*$"))
                 {
-                    MessageBox.Show("Solo se permiten números."); 
+                    MessageBox.Show("Solo se permiten números.");
                     return;
                 }
-                if (length == 2 || length == 1)
+
+                if (length != 5 && length != 6)
                 {
-                    string value = textBox1.Text + ".00";
-                    producto.kilos  = Convert.ToDecimal(value, CultureInfo.InvariantCulture);
-                    producto.subtotal = Math.Round(producto.precio_unitario * producto.kilos, 2);  
+                    MessageBox.Show("Se necesitan cargar 5 o 6 digitos totales");
+                    return;
                 }
-                else if (length == 4)
-                {
-                    string value = textBox1.Text.Insert(1, ".");
-                    producto.kilos = Convert.ToDecimal(value, CultureInfo.InvariantCulture);
-                    producto.subtotal = Math.Round(producto.precio_unitario * producto.kilos, 2);
-                }
-                else if (length == 0 || length != 2 || length != 4) // If the length is not 2 or 4, show an error
-                {
-                    MessageBox.Show("Longitud no válida.", "Atencion!", MessageBoxButtons.OK);
-                    return;  
-                } 
+
+                producto.kilos = Convert.ToDecimal(textBox1.Text);
+                producto.subtotal = producto.precio_unitario * producto.kilos; 
             }
             else
             {
-                //string value = textBox1.Text + ".00"; 
-                //var value2  = Convert.ToDecimal(value, CultureInfo.InvariantCulture);
                 producto.cantidad = Convert.ToInt32(textBox1.Text);
                 producto.subtotal = Math.Round(producto.precio_unitario * producto.cantidad);
             }
@@ -238,12 +229,52 @@ namespace Carniceria
                     await _dbcontext.Procedures.sp_insertar_deuda_detalleAsync(id_deuda._value, pdl.idProducto, pdl.kilos, pdl.cantidad, pdl.subtotal);
                 }
             }
-            this.Close();
+            Close();
         }
 
         private void dgvProductos_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
 
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            int cursorPosition = textBox1.SelectionStart;
+
+            string text = textBox1.Text.Replace(",", "");
+
+            if (text.Length == 4)
+            {
+                text = text.Insert(1, ",");
+            }
+            else if (text.Length == 5)
+            {
+                text = text.Insert(2, ",");
+            }
+
+            textBox1.Text = text;
+
+            textBox1.SelectionStart = cursorPosition + (textBox1.Text.Length - text.Length);
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+            int cursorPosition = textBox4.SelectionStart;
+
+            string text = textBox4.Text.Replace(",", "");
+
+            if (text.Length == 4)
+            {
+                text = text.Insert(1, ",");
+            }
+            else if (text.Length == 5)
+            {
+                text = text.Insert(2, ",");
+            }
+
+            textBox4.Text = text;
+
+            textBox4.SelectionStart = cursorPosition + (textBox4.Text.Length - text.Length);
         }
     }
 }
