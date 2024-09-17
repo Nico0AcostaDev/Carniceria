@@ -52,25 +52,27 @@
             // 
             // comboBox1
             // 
+            comboBox1.Font = new Font("Segoe UI", 12F);
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(106, 12);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(190, 23);
+            comboBox1.Size = new Size(292, 29);
             comboBox1.TabIndex = 0;
             // 
             // label1
             // 
             label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 12F);
             label1.Location = new Point(12, 15);
             label1.Name = "label1";
-            label1.Size = new Size(49, 15);
+            label1.Size = new Size(65, 21);
             label1.TabIndex = 1;
             label1.Text = "Clientes";
             // 
             // dgvProductos
             // 
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvProductos.Location = new Point(12, 65);
+            dgvProductos.Location = new Point(12, 100);
             dgvProductos.MultiSelect = false;
             dgvProductos.Name = "dgvProductos";
             dgvProductos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -83,9 +85,10 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(12, 47);
+            label2.Font = new Font("Segoe UI", 12F);
+            label2.Location = new Point(12, 63);
             label2.Name = "label2";
-            label2.Size = new Size(61, 15);
+            label2.Size = new Size(80, 21);
             label2.TabIndex = 3;
             label2.Text = "Productos";
             // 
@@ -100,9 +103,10 @@
             // label3
             // 
             label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 12F);
             label3.Location = new Point(508, 18);
             label3.Name = "label3";
-            label3.Size = new Size(36, 15);
+            label3.Size = new Size(49, 21);
             label3.TabIndex = 5;
             label3.Text = "Venta";
             // 
@@ -125,14 +129,16 @@
             // label5
             // 
             label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 12F);
             label5.Location = new Point(5, 9);
             label5.Name = "label5";
-            label5.Size = new Size(101, 15);
+            label5.Size = new Size(133, 21);
             label5.TabIndex = 27;
             label5.Text = "Agregar Producto";
             // 
             // button4
             // 
+            button4.Font = new Font("Segoe UI", 10F);
             button4.Location = new Point(17, 110);
             button4.Name = "button4";
             button4.Size = new Size(89, 26);
@@ -143,6 +149,7 @@
             // 
             // button2
             // 
+            button2.Font = new Font("Segoe UI", 10F);
             button2.Location = new Point(318, 110);
             button2.Name = "button2";
             button2.Size = new Size(107, 26);
@@ -154,9 +161,10 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(244, 72);
+            label6.Font = new Font("Segoe UI", 10F);
+            label6.Location = new Point(231, 70);
             label6.Name = "label6";
-            label6.Size = new Size(87, 15);
+            label6.Size = new Size(100, 19);
             label6.TabIndex = 22;
             label6.Text = "Precio unitario:";
             // 
@@ -171,18 +179,20 @@
             // label4
             // 
             label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 10F);
             label4.Location = new Point(5, 37);
             label4.Name = "label4";
-            label4.Size = new Size(59, 15);
+            label4.Size = new Size(68, 19);
             label4.TabIndex = 19;
             label4.Text = "Producto:";
             // 
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(244, 34);
+            label8.Font = new Font("Segoe UI", 10F);
+            label8.Location = new Point(231, 37);
             label8.Name = "label8";
-            label8.Size = new Size(58, 15);
+            label8.Size = new Size(67, 19);
             label8.TabIndex = 16;
             label8.Text = "Cantidad:";
             // 
@@ -204,9 +214,10 @@
             // 
             // btnAceptar
             // 
-            btnAceptar.Location = new Point(845, 429);
+            btnAceptar.Font = new Font("Segoe UI", 12F);
+            btnAceptar.Location = new Point(819, 429);
             btnAceptar.Name = "btnAceptar";
-            btnAceptar.Size = new Size(109, 38);
+            btnAceptar.Size = new Size(135, 38);
             btnAceptar.TabIndex = 24;
             btnAceptar.Text = "Finalizar Venta";
             btnAceptar.UseVisualStyleBackColor = true;
@@ -216,7 +227,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(985, 479);
+            ClientSize = new Size(985, 514);
             Controls.Add(panel1);
             Controls.Add(btnAceptar);
             Controls.Add(label3);

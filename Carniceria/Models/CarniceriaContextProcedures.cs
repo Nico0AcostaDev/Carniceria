@@ -34,7 +34,6 @@ namespace Carniceria.Models
 
         protected void OnModelCreatingGeneratedProcedures(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<sp_insertar_pagoResult>().HasNoKey().ToView(null);
             modelBuilder.Entity<sp_obtener_clientesResult>().HasNoKey().ToView(null);
             modelBuilder.Entity<sp_obtener_detalle_deudaResult>().HasNoKey().ToView(null);
             modelBuilder.Entity<sp_obtener_deudaResult>().HasNoKey().ToView(null);
@@ -148,8 +147,15 @@ namespace Carniceria.Models
             return _;
         }
 
-        public virtual async Task<List<sp_insertar_pagoResult>> sp_insertar_pagoAsync(int? id_deuda, decimal? monto_pagado, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        public virtual async Task<int> sp_insertar_pagoAsync(int? id_deuda, decimal? monto_pagado, OutputParameter<int?> resultado, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
         {
+            var parameterresultado = new SqlParameter
+            {
+                ParameterName = "resultado",
+                Direction = System.Data.ParameterDirection.InputOutput,
+                Value = resultado?._value ?? Convert.DBNull,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
             var parameterreturnValue = new SqlParameter
             {
                 ParameterName = "returnValue",
@@ -173,10 +179,12 @@ namespace Carniceria.Models
                     Value = monto_pagado ?? Convert.DBNull,
                     SqlDbType = System.Data.SqlDbType.Decimal,
                 },
+                parameterresultado,
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<sp_insertar_pagoResult>("EXEC @returnValue = [dbo].[sp_insertar_pago] @id_deuda, @monto_pagado", sqlParameters, cancellationToken);
+            var _ = await _context.Database.ExecuteSqlRawAsync("EXEC @returnValue = [dbo].[sp_insertar_pago] @id_deuda, @monto_pagado, @resultado OUTPUT", sqlParameters, cancellationToken);
 
+            resultado.SetValue(parameterresultado.Value);
             returnValue?.SetValue(parameterreturnValue.Value);
 
             return _;

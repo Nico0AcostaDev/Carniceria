@@ -103,6 +103,18 @@ namespace Carniceria
             textBox2.Text = row.Cells["Nombre Producto"].Value.ToString();
 
             nombre_producto = row.Cells["Nombre Producto"].Value.ToString();
+
+            if (tipo == "C")
+            {
+                label8.Text = "Kilos";
+                label6.Text = "Precio por kilo";
+            } 
+            else
+            {
+                label8.Text = "Cantidad";
+                label6.Text = "Valor Unitario";
+            }
+
         }
 
         private void button4_Click(object sender, EventArgs e)

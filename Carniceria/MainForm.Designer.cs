@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             menuStrip1 = new MenuStrip();
             ventasToolStripMenuItem = new ToolStripMenuItem();
             generarVentaToolStripMenuItem = new ToolStripMenuItem();
@@ -38,38 +39,41 @@
             // 
             // menuStrip1
             // 
+            menuStrip1.BackColor = Color.SteelBlue;
             menuStrip1.Items.AddRange(new ToolStripItem[] { ventasToolStripMenuItem, deudasToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(800, 24);
+            menuStrip1.Size = new Size(704, 36);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
             // ventasToolStripMenuItem
             // 
             ventasToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { generarVentaToolStripMenuItem });
+            ventasToolStripMenuItem.Font = new Font("Segoe UI", 15F);
             ventasToolStripMenuItem.Name = "ventasToolStripMenuItem";
-            ventasToolStripMenuItem.Size = new Size(53, 20);
+            ventasToolStripMenuItem.Size = new Size(81, 32);
             ventasToolStripMenuItem.Text = "Ventas";
             // 
             // generarVentaToolStripMenuItem
             // 
             generarVentaToolStripMenuItem.Name = "generarVentaToolStripMenuItem";
-            generarVentaToolStripMenuItem.Size = new Size(147, 22);
+            generarVentaToolStripMenuItem.Size = new Size(207, 32);
             generarVentaToolStripMenuItem.Text = "Generar Venta";
             generarVentaToolStripMenuItem.Click += generarVentaToolStripMenuItem_Click;
             // 
             // deudasToolStripMenuItem
             // 
             deudasToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { deudasParcialesToolStripMenuItem1 });
+            deudasToolStripMenuItem.Font = new Font("Segoe UI", 15F);
             deudasToolStripMenuItem.Name = "deudasToolStripMenuItem";
-            deudasToolStripMenuItem.Size = new Size(58, 20);
+            deudasToolStripMenuItem.Size = new Size(89, 32);
             deudasToolStripMenuItem.Text = "Deudas";
             // 
             // deudasParcialesToolStripMenuItem1
             // 
             deudasParcialesToolStripMenuItem1.Name = "deudasParcialesToolStripMenuItem1";
-            deudasParcialesToolStripMenuItem1.Size = new Size(180, 22);
+            deudasParcialesToolStripMenuItem1.Size = new Size(221, 32);
             deudasParcialesToolStripMenuItem1.Text = "Deudas y Pagos";
             deudasParcialesToolStripMenuItem1.Click += deudasParcialesToolStripMenuItem1_Click;
             // 
@@ -77,12 +81,15 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            BackColor = SystemColors.ActiveCaption;
+            ClientSize = new Size(704, 369);
             Controls.Add(menuStrip1);
+            Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = menuStrip1;
             Name = "MainForm";
-            Text = "Form1";
+            Text = "Menu";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ResumeLayout(false);

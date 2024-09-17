@@ -1,8 +1,7 @@
 ﻿using Carniceria.Models;
 using System.Data;
-using System.Drawing;
 using System.Globalization;
-using System.Windows.Forms;
+using System.Linq;
 
 namespace Carniceria
 {
@@ -13,6 +12,7 @@ namespace Carniceria
         private DataTable dtDeudaDetalle = new DataTable();
         private DataTable dtPagos = new DataTable();
         private List<sp_obtener_deudaResult> deudas;
+        Color lightGreen = Color.FromArgb(144, 238, 144);
         public DeudasParcialesForm(CarniceriaContext dbcontext)
         {
             InitializeComponent();
@@ -75,7 +75,7 @@ namespace Carniceria
         {
             deudas = await _dbcontext.Procedures.sp_obtener_deudaAsync();
 
-            foreach (var de in deudas)
+            foreach (var de in deudas.OrderByDescending(x => x.fecha_deuda))
             {   string estadoDeuda = "";
                 if (de.saldada.Value == true)
                 {
@@ -86,28 +86,35 @@ namespace Carniceria
                     estadoDeuda = "Activa";
                 }
 
-                dtDeuda.Rows.Add(de.id_deuda, de.fecha_deuda, de.nombre, de.apellido, de.total, estadoDeuda);
-                 
+                dtDeuda.Rows.Add(de.id_deuda, de.fecha_deuda, de.nombre, de.apellido, de.total, estadoDeuda); 
             } 
 
             foreach (DataGridViewRow row in dgvDeuda.Rows)
             {
                 if (row.Cells["Estado deuda"].Value.ToString() == "Cancelada")
                 {
-                    row.DefaultCellStyle.BackColor = Color.Green;
+                    row.DefaultCellStyle.BackColor = lightGreen;
                 }
             }
         }
 
         private async void button1_Click(object sender, EventArgs e)
         {
+            foreach (DataGridViewRow row1 in dgvDeuda.Rows)
+            {
+                if (row1.Cells["Estado deuda"].Value.ToString() == "Cancelada")
+                {
+                    row1.DefaultCellStyle.BackColor = lightGreen;
+                }
+            }
+            decimal montoAcumulado = 0m;
             dtDeudaDetalle.Clear();
             dtPagos.Clear();
             DataGridViewRow row = dgvDeuda.SelectedRows[0];
 
             int idDeuda = Convert.ToInt32(row.Cells["Id_Deuda"].Value);
             var detalle = await _dbcontext.Procedures.sp_obtener_detalle_deudaAsync(idDeuda);
-
+           
             foreach (var item in detalle)
             {   if (item.nombre_producto != null)
                 {
@@ -117,8 +124,15 @@ namespace Carniceria
                 if (item.id_parciales != null)
                 {
                     dtPagos.Rows.Add(item.id_parciales, item.fecha_pago, item.monto_pagado);
+                     // Inicializa una variable para acumular los valores
+                    montoAcumulado += item.monto_pagado.Value;
+                    
                 }
             }
+            lblFaltante.Text = montoAcumulado.ToString();
+            decimal total = Convert.ToDecimal(row.Cells["Total"].Value);
+            decimal resultado = total - montoAcumulado;
+            lblLiquidar.Text = resultado.ToString();
             label4.Text = row.Cells["Total"].Value.ToString();
             label7.Text = row.Cells["Nombre"].Value.ToString() + " " + row.Cells["Apellido"].Value.ToString();
         }
@@ -142,10 +156,22 @@ namespace Carniceria
                 return;
             }
 
-            OutputParameter<int> pagoEjecutado = new OutputParameter<int>();
-            await _dbcontext.Procedures.sp_insertar_pagoAsync(idDeuda, pago, pagoEjecutado);
-            label4.Text =   "";
-            label7.Text =   "";
+            OutputParameter<int?> pagoEjecutado = new OutputParameter<int?>();
+            await _dbcontext.Procedures.sp_insertar_pagoAsync(idDeuda, pago,pagoEjecutado);
+
+            if (pagoEjecutado.Value == 1)
+            {
+                MessageBox.Show($"Se abono {pago} sobre la deuda correctamente");
+                return;
+            }  
+            else if (pagoEjecutado.Value == 0)
+            {
+                MessageBox.Show($"No se pudo efectuar el pago, posiblemente el monto a abonar sea mayor a la deuda");
+                return;
+            }
+
+            label4.Text = "";
+            label7.Text = "";
             textBoxPago.Text = "";
 
             dtDeuda.Clear();

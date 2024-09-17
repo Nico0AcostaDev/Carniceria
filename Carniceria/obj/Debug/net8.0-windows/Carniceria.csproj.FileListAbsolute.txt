@@ -55,3 +55,4 @@ C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\refint
 C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carniceria.pdb
 C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carniceria.genruntimeconfig.cache
 C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\ref\Carniceria.dll
+C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carniceria.Properties.Resources.resources

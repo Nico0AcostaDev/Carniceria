@@ -14,7 +14,7 @@ namespace Carniceria.Models
     {
         Task<int> sp_insertar_deudaAsync(int? id_cliente, decimal? total, OutputParameter<int?> id_deuda, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<int> sp_insertar_deuda_detalleAsync(int? id_deuda, int? id_producto, decimal? kilos, int? cantidad, decimal? monto_producto, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
-        Task<List<sp_insertar_pagoResult>> sp_insertar_pagoAsync(int? id_deuda, decimal? monto_pagado, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
+        Task<int> sp_insertar_pagoAsync(int? id_deuda, decimal? monto_pagado, OutputParameter<int?> resultado, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<sp_obtener_clientesResult>> sp_obtener_clientesAsync(OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<sp_obtener_detalle_deudaResult>> sp_obtener_detalle_deudaAsync(int? id_deuda, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<sp_obtener_deudaResult>> sp_obtener_deudaAsync(OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
