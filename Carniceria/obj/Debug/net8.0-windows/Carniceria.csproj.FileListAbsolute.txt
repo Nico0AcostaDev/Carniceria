@@ -43,6 +43,7 @@ C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carnic
 C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carniceria.DeudasParcialesForm.resources
 C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carniceria.MainForm.resources
 C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carniceria.VentaForm.resources
+C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carniceria.Properties.Resources.resources
 C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carniceria.csproj.GenerateResource.cache
 C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carniceria.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carniceria.AssemblyInfoInputs.cache
@@ -55,4 +56,3 @@ C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\refint
 C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carniceria.pdb
 C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carniceria.genruntimeconfig.cache
 C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\ref\Carniceria.dll
-C:\Users\vamoooooo\Desktop\Carniceria\Carniceria\obj\Debug\net8.0-windows\Carniceria.Properties.Resources.resources
