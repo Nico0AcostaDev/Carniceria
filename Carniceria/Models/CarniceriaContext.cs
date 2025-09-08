@@ -12,12 +12,6 @@ public partial class CarniceriaContext : DbContext
         : base(options)
     {
     }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        OnModelCreatingGeneratedProcedures(modelBuilder);
-        OnModelCreatingPartial(modelBuilder);
-    }
     public static CarniceriaContext CreateDbContext(string connectionString)
     {
         var optionsBuilder = new DbContextOptionsBuilder<CarniceriaContext>();
@@ -25,5 +19,12 @@ public partial class CarniceriaContext : DbContext
 
         return new CarniceriaContext(optionsBuilder.Options);
     }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.UseCollation("SQL_Latin1_General_CP1_CI_AS");
+
+        OnModelCreatingPartial(modelBuilder);
+    }
+
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

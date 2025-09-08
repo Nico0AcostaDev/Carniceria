@@ -34,13 +34,16 @@
             generarVentaToolStripMenuItem = new ToolStripMenuItem();
             deudasToolStripMenuItem = new ToolStripMenuItem();
             deudasParcialesToolStripMenuItem1 = new ToolStripMenuItem();
+            toolStripMenuItem1 = new ToolStripMenuItem();
+            toolStripMenuItem2 = new ToolStripMenuItem();
+            altaToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
             // 
             menuStrip1.BackColor = Color.SteelBlue;
-            menuStrip1.Items.AddRange(new ToolStripItem[] { ventasToolStripMenuItem, deudasToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { ventasToolStripMenuItem, deudasToolStripMenuItem, toolStripMenuItem1, altaToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(704, 36);
@@ -77,6 +80,29 @@
             deudasParcialesToolStripMenuItem1.Text = "Deudas y Pagos";
             deudasParcialesToolStripMenuItem1.Click += deudasParcialesToolStripMenuItem1_Click;
             // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem2 });
+            toolStripMenuItem1.Font = new Font("Segoe UI", 15F);
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(156, 32);
+            toolStripMenuItem1.Text = "Modificaciones";
+            toolStripMenuItem1.Click += toolStripMenuItem1_Click;
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new Size(180, 32);
+            toolStripMenuItem2.Text = "Editar";
+            toolStripMenuItem2.Click += toolStripMenuItem2_Click;
+            // 
+            // altaToolStripMenuItem
+            // 
+            altaToolStripMenuItem.Font = new Font("Segoe UI", 15F);
+            altaToolStripMenuItem.Name = "altaToolStripMenuItem";
+            altaToolStripMenuItem.Size = new Size(67, 32);
+            altaToolStripMenuItem.Text = "Altas";
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -105,5 +131,8 @@
         private ToolStripMenuItem generarVentaToolStripMenuItem;
         private ToolStripMenuItem deudasToolStripMenuItem;
         private ToolStripMenuItem deudasParcialesToolStripMenuItem1;
+        private ToolStripMenuItem toolStripMenuItem1;
+        private ToolStripMenuItem toolStripMenuItem2;
+        private ToolStripMenuItem altaToolStripMenuItem;
     }
 }

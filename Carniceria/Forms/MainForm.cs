@@ -7,8 +7,9 @@ namespace Carniceria
         private readonly CarniceriaContext _dbcontext;
         public MainForm(CarniceriaContext dbcontext)
         {
-            InitializeComponent();
+            InitializeComponent(); 
             _dbcontext = dbcontext;
+            EstilosFormulario();
         }
 
         private void generarVentaToolStripMenuItem_Click(object sender, EventArgs e)
@@ -28,6 +29,55 @@ namespace Carniceria
         private void MainForm_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void EstilosFormulario()
+        {
+            this.BackColor = Color.WhiteSmoke;
+            this.Font = new Font("Segoe UI", 10);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.Text = "Carnicería - Sistema de Gestión";
+
+            if (this.MainMenuStrip != null)
+            {
+                Color violeta = Color.FromArgb(90, 50, 110);
+                Color violetaHover = Color.FromArgb(110, 70, 140);
+
+                this.MainMenuStrip.BackColor = violeta;
+                this.MainMenuStrip.ForeColor = Color.White;
+                this.MainMenuStrip.Font = new Font("Segoe UI Semibold", 10);
+                this.MainMenuStrip.RenderMode = ToolStripRenderMode.Professional;
+
+                foreach (ToolStripMenuItem item in this.MainMenuStrip.Items)
+                {
+                    item.BackColor = violeta;
+                    item.ForeColor = Color.White;
+
+                    // Hover
+                    item.MouseEnter += (s, e) => item.BackColor = violetaHover;
+                    item.MouseLeave += (s, e) => item.BackColor = violeta;
+
+                    // Todos los subitems igual
+                    foreach (ToolStripItem subItem in item.DropDownItems)
+                    {
+                        subItem.BackColor = violeta;
+                        subItem.ForeColor = Color.White;
+
+                        subItem.MouseEnter += (s, e) => subItem.BackColor = violetaHover;
+                        subItem.MouseLeave += (s, e) => subItem.BackColor = violeta;
+                    }
+                }
+            }
+        }
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            ModificacionesForm modifForm = new ModificacionesForm(_dbcontext);
+            modifForm.ShowDialog();
+            this.Show();
         }
     }
 }

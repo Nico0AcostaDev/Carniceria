@@ -10,7 +10,7 @@ namespace Carniceria
         static void Main()
         {
             string connectionString = "";
-            var prueba = @"C:\Users\vamoooooo\Desktop\Carniceria\appsettings.json";
+            var prueba = @"C:\Users\Nico\Documents\GitHub\E-Project\E-Project\appsettings.json";
 
             using (StreamReader r = new StreamReader(prueba))
             {

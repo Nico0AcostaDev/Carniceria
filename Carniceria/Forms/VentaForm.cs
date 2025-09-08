@@ -1,6 +1,7 @@
 ﻿using Carniceria.Dto;
 using Carniceria.Models;
 using System.Data;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Carniceria
@@ -12,17 +13,19 @@ namespace Carniceria
         private DataTable dtDgvVenta = new DataTable();
         private List<Producto> productList = new List<Producto>();
         private string nombre_producto = "";
+        private decimal precio_producto;
         private int id_cliente = new int();
         private decimal total = new decimal();
         private string tipo = "";
         private int producto_id = new int();
         public VentaForm(CarniceriaContext dbcontext)
         {
-            InitializeComponent();
+            InitializeComponent(); 
             _dbcontext = dbcontext;
 
             dtProductos.Columns.Add("Id_Productos", typeof(int));
             dtProductos.Columns.Add("Nombre Producto", typeof(string));
+            dtProductos.Columns.Add("Precio", typeof(decimal));
             dtProductos.Columns.Add("Tipo", typeof(string));
 
             dtDgvVenta.Columns.Add("Nombre Producto", typeof(string));
@@ -34,6 +37,8 @@ namespace Carniceria
             dgvProductos.DataSource = dtProductos;
             dgvVenta.DataSource = dtDgvVenta;
             ajustesFormatoDiseñoDgv();
+            // ✅ Aplicar estilos modernos
+            AplicarEstilosForm();
         }
         private void ajustesFormatoDiseñoDgv()
         {
@@ -64,7 +69,7 @@ namespace Carniceria
 
             foreach (var product in productos)
             {
-                dtProductos.Rows.Add(product.id_producto, product.nombre_producto, product.tipo);
+                dtProductos.Rows.Add(product.id_producto, product.nombre_producto, product.precio, product.tipo);
             }
             var dataSource = new List<Cliente>();
 
@@ -93,16 +98,24 @@ namespace Carniceria
             textBox2.Text = row.Cells["Nombre Producto"].Value.ToString();
 
             nombre_producto = row.Cells["Nombre Producto"].Value.ToString();
+            precio_producto = Convert.ToDecimal(row.Cells["Precio"].Value);
 
+            //C carne P producto
             if (tipo == "C")
             {
                 label8.Text = "Kilos";
                 label6.Text = "Precio por kilo";
+                textBox4.Text = "";
+                textBox4.Enabled = true;
             } 
             else
             {
                 label8.Text = "Cantidad";
                 label6.Text = "Valor Unitario";
+
+                decimal precio = Convert.ToDecimal(row.Cells["Precio"].Value);
+                textBox4.Text = precio.ToString("0.00", CultureInfo.InvariantCulture);
+                textBox4.Enabled = false;
             }
 
         }
@@ -148,7 +161,7 @@ namespace Carniceria
             else
             {
                 producto.cantidad = Convert.ToInt32(textBox1.Text);
-                producto.subtotal = Math.Round(producto.precio_unitario * producto.cantidad);
+                producto.subtotal = Math.Round(producto.precio_unitario * producto.cantidad, 2);
             }
 
             producto.nombre_producto = nombre_producto;
@@ -195,6 +208,68 @@ namespace Carniceria
 
             return valida;
         }
+        private void AplicarEstilosForm()
+        {
+            // Fondo del form
+            this.BackColor = Color.WhiteSmoke;
+            this.Font = new Font("Segoe UI", 10);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.Text = "Carnicería - Venta de Productos";
+
+            // Botones estilo moderno
+            foreach (Control c in this.Controls)
+            {
+                if (c is Button btn)
+                {
+                    btn.BackColor = Color.FromArgb(90, 50, 110); // violeta
+                    btn.ForeColor = Color.White;
+                    btn.FlatStyle = FlatStyle.Flat;
+                    btn.FlatAppearance.BorderSize = 0;
+
+                    btn.MouseEnter += (s, e) => btn.BackColor = Color.FromArgb(110, 70, 140);
+                    btn.MouseLeave += (s, e) => btn.BackColor = Color.FromArgb(90, 50, 110);
+                }
+                else if (c is Label lbl)
+                {
+                    lbl.ForeColor = Color.FromArgb(50, 30, 70); // texto oscuro violeta
+                }
+                else if (c is ComboBox cb)
+                {
+                    cb.BackColor = Color.White;
+                    cb.ForeColor = Color.FromArgb(50, 30, 70);
+                }
+                else if (c is TextBox tb)
+                {
+                    tb.BackColor = Color.White;
+                    tb.ForeColor = Color.FromArgb(50, 30, 70);
+                }
+            }
+
+            // DataGridViews estilo moderno
+            Color rowAlt = Color.FromArgb(240, 230, 250);
+            Color rowNormal = Color.White;
+
+            foreach (DataGridView dgv in new DataGridView[] { dgvProductos, dgvVenta })
+            {
+                dgv.EnableHeadersVisualStyles = false;
+                dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(90, 50, 110);
+                dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 10);
+                dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+                dgv.RowHeadersVisible = false;
+                dgv.AllowUserToResizeRows = false;
+
+                dgv.DefaultCellStyle.BackColor = rowNormal;
+                dgv.AlternatingRowsDefaultCellStyle.BackColor = rowAlt;
+                dgv.DefaultCellStyle.ForeColor = Color.FromArgb(50, 30, 70);
+                dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(110, 70, 140);
+                dgv.DefaultCellStyle.SelectionForeColor = Color.White;
+                dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dgv.ReadOnly = true;
+            }
+        }
+
         private async void btnAceptar_Click(object sender, EventArgs e)
         {
             id_cliente = (int)this.comboBox1.SelectedValue;

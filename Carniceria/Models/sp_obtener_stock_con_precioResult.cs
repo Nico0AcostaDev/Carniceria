@@ -6,14 +6,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Carniceria.Models
 {
-    public partial class sp_obtener_productosResult
+    public partial class sp_obtener_stock_con_precioResult
     {
         public int id_producto { get; set; }
         [StringLength(255)]
         public string nombre_producto { get; set; }
+        public int? cantidad { get; set; }
         [Column("precio", TypeName = "decimal(10,2)")]
         public decimal? precio { get; set; }
+        public DateTime fecha_actualizacion { get; set; }
         [StringLength(1)]
-        public string tipo { get; set; }
+        public string cod_estado { get; set; }
     }
 }

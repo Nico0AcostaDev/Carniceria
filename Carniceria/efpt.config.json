@@ -2,9 +2,9 @@
    "CodeGenerationMode": 4,
    "ContextClassName": "CarniceriaContext",
    "ContextNamespace": null,
-   "DefaultDacpacSchema": null,
    "FilterSchemas": false,
    "IncludeConnectionString": false,
+   "MinimumProductVersion": "2.6.1080",
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": "Models",
@@ -16,6 +16,10 @@
    "T4TemplatePath": null,
    "Tables": [
       {
+         "Name": "[dbo].[sp_editar_producto]",
+         "ObjectType": 1
+      },
+      {
          "Name": "[dbo].[sp_insertar_deuda_detalle]",
          "ObjectType": 1
       },
@@ -25,6 +29,10 @@
       },
       {
          "Name": "[dbo].[sp_insertar_pago]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[sp_insertar_producto_con_stock]",
          "ObjectType": 1
       },
       {
@@ -42,19 +50,26 @@
       {
          "Name": "[dbo].[sp_obtener_productos]",
          "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[sp_obtener_stock_con_precio]",
+         "ObjectType": 1
       }
    ],
-   "UiHint": "(localdb)\\MSSQLLocalDB.Carniceria",
+   "UiHint": null,
    "UncountableWords": null,
+   "UseAsyncStoredProcedureCalls": true,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
+   "UseDatabaseNamesForRoutines": true,
    "UseDateOnlyTimeOnly": false,
    "UseDbContextSplitting": false,
    "UseDecimalDataAnnotationForSprocResult": true,
    "UseFluentApiOnly": true,
    "UseHandleBars": false,
    "UseHierarchyId": false,
-   "UseInflector": true,
+   "UseInflector": false,
+   "UseInternalAccessModifiersForSprocsAndFunctions": false,
    "UseLegacyPluralizer": false,
    "UseManyToManyEntity": false,
    "UseNoDefaultConstructor": false,
@@ -62,8 +77,10 @@
    "UseNoObjectFilter": false,
    "UseNodaTime": false,
    "UseNullableReferences": false,
+   "UsePrefixNavigationNaming": false,
    "UseSchemaFolders": false,
    "UseSchemaNamespaces": false,
    "UseSpatial": false,
-   "UseT4": false
+   "UseT4": false,
+   "UseT4Split": false
 }
