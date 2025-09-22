@@ -36,8 +36,7 @@ namespace Carniceria
 
             dgvProductos.DataSource = dtProductos;
             dgvVenta.DataSource = dtDgvVenta;
-            ajustesFormatoDiseñoDgv();
-            // ✅ Aplicar estilos modernos
+            ajustesFormatoDiseñoDgv(); 
             AplicarEstilosForm();
         }
         private void ajustesFormatoDiseñoDgv()
@@ -129,45 +128,77 @@ namespace Carniceria
             textBox2.Text = "";
             textBox4.Text = "";
         }
-        private void button2_Click(object sender, EventArgs e)
+        private async void button2_Click(object sender, EventArgs e)
         {
             Producto producto = new Producto();
 
             if (!validarCarrito(textBox1.Text, textBox2.Text, textBox4.Text))
                 return;
+            int stockDisponible = 0;
+            if (tipo == "P") // 👈 solo consulto stock si es producto
+            {
+                // Consultar stock disponible usando el SP
+                var stockResult = await _dbcontext.Procedures.sp_consultar_stock_productoAsync(producto_id);
+                
+                bool hayStock = false;
 
-            producto.precio_unitario = Convert.ToDecimal(textBox4.Text.Replace(",","")); 
+                if (stockResult.Any())
+                {
+                    var stockRow = stockResult.First();
+                    if (stockRow.stock_disponible > 0)
+                    {
+                        stockDisponible = (int)stockRow.stock_disponible;
+                        hayStock = true;
+                    }
+                    else
+                    {
+                        hayStock = false;
+                    }
+                }
 
-            // C es igual a carnes... logica para detectar cantidades o kilos
+                if (!hayStock)
+                {
+                    MessageBox.Show("El producto se agotó.", "Atención!", MessageBoxButtons.OK);
+                    return;
+                }
+            }
+
+            producto.precio_unitario = Convert.ToDecimal(textBox4.Text.Replace(",", ""));
+
             if (tipo == "C")
             {
-                int length = textBox1.Text.Length;
-
-                if (!Regex.IsMatch(textBox1.Text, @"^\d{1,3}(,\d{3})*$"))
+                if (!decimal.TryParse(textBox1.Text, out decimal kilos))
                 {
-                    MessageBox.Show("Solo se permiten números.", "Atencion!", MessageBoxButtons.OK);
+                    MessageBox.Show("Solo se permiten números en Kilos.", "Atención!", MessageBoxButtons.OK);
                     return;
-                }
+                } 
 
-                if (length != 5 && length != 6)
-                {
-                    MessageBox.Show("Se necesitan cargar 5 o 6 digitos totales", "Atencion!", MessageBoxButtons.OK);
-                    return;
-                }
-
-                producto.kilos = Convert.ToDecimal(textBox1.Text);
-                producto.subtotal = producto.precio_unitario * producto.kilos; 
+                producto.kilos = kilos;
+                producto.subtotal = producto.precio_unitario * producto.kilos;
             }
             else
             {
-                producto.cantidad = Convert.ToInt32(textBox1.Text);
+                if (!int.TryParse(textBox1.Text, out int cantidad))
+                {
+                    MessageBox.Show("Solo se permiten números en Cantidad.", "Atención!", MessageBoxButtons.OK);
+                    return;
+                }
+
+                // Limitar por stock
+                if (cantidad > stockDisponible)
+                {
+                    MessageBox.Show($"Solo hay {stockDisponible} unidades disponibles.", "Atención!", MessageBoxButtons.OK);
+                    return;
+                }
+
+                producto.cantidad = cantidad;
                 producto.subtotal = Math.Round(producto.precio_unitario * producto.cantidad, 2);
             }
 
             producto.nombre_producto = nombre_producto;
             producto.idProducto = producto_id;
 
-            bool existeProducto = productList.Where(x => x.idProducto == producto.idProducto).Any();
+            bool existeProducto = productList.Any(x => x.idProducto == producto.idProducto);
 
             if (!existeProducto)
             {
@@ -176,10 +207,11 @@ namespace Carniceria
             }
             else
             {
-                MessageBox.Show($"El producto ya se encuentra cargado en el listado de compras!!", "Atencion!", MessageBoxButtons.OK);
+                MessageBox.Show($"El producto ya se encuentra cargado en el listado de compras!!", "Atención!", MessageBoxButtons.OK);
                 limpiarControles();
             }
         }
+
         public void addCompraToGrid(Producto producto)
         {
             productList.Add(producto);
@@ -317,7 +349,8 @@ namespace Carniceria
             int cursorPosition = textBox1.SelectionStart;
 
             string text = textBox1.Text.Replace(",", "");
-
+            if (text.Length > 4)
+                text = text.Substring(0, 4);
             if (text.Length == 4)
             {
                 text = text.Insert(1, ",");
@@ -336,7 +369,8 @@ namespace Carniceria
             int cursorPosition = textBox4.SelectionStart;
 
             string text = textBox4.Text.Replace(",", "");
-
+            if (text.Length > 4)
+                text = text.Substring(0, 4);
             if (text.Length == 4)
             {
                 text = text.Insert(1, ",");

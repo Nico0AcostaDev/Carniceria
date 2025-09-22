@@ -16,7 +16,19 @@
    "T4TemplatePath": null,
    "Tables": [
       {
+         "Name": "[dbo].[sp_alta_producto]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[sp_consultar_stock_producto]",
+         "ObjectType": 1
+      },
+      {
          "Name": "[dbo].[sp_editar_producto]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[sp_insertar_cliente]",
          "ObjectType": 1
       },
       {

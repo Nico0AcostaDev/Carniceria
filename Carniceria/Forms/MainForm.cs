@@ -1,3 +1,5 @@
+using Carniceria.Forms;
+using Carniceria.Forms.Altas;
 using Carniceria.Models;
 
 namespace Carniceria
@@ -7,7 +9,7 @@ namespace Carniceria
         private readonly CarniceriaContext _dbcontext;
         public MainForm(CarniceriaContext dbcontext)
         {
-            InitializeComponent(); 
+            InitializeComponent();
             _dbcontext = dbcontext;
             EstilosFormulario();
         }
@@ -40,7 +42,7 @@ namespace Carniceria
             this.BackColor = Color.WhiteSmoke;
             this.Font = new Font("Segoe UI", 10);
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.Text = "Carnicería - Sistema de Gestión";
+            this.Text = "Sistema de Gestión";
 
             if (this.MainMenuStrip != null)
             {
@@ -77,6 +79,20 @@ namespace Carniceria
         {
             ModificacionesForm modifForm = new ModificacionesForm(_dbcontext);
             modifForm.ShowDialog();
+            this.Show();
+        }
+
+        private void productosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Productos Productos = new Productos(_dbcontext);
+            Productos.ShowDialog();
+            this.Show();
+        }
+
+        private void clientesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Clientes clientesForm = new Clientes(_dbcontext);
+            clientesForm.ShowDialog();
             this.Show();
         }
     }
