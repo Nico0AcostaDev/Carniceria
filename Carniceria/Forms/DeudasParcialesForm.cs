@@ -1,6 +1,10 @@
-﻿using Carniceria.Models;
+﻿using Carniceria.Dto;
+using Carniceria.Models;
+using Carniceria.Models.Carniceria.Dto;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Globalization;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Carniceria
 {
@@ -10,7 +14,7 @@ namespace Carniceria
         private DataTable dtDeuda = new DataTable();
         private DataTable dtDeudaDetalle = new DataTable();
         private DataTable dtPagos = new DataTable();
-        private List<sp_obtener_deudaResult> deudas;
+        private List<DeudaRegistradaDto> deudas;
         Color lightGreen = Color.FromArgb(144, 238, 144);
         public DeudasParcialesForm(CarniceriaContext dbcontext)
         {
@@ -76,23 +80,22 @@ namespace Carniceria
         }
         private async void CargarGridAndCombo()
         {
-            deudas = await _dbcontext.Procedures.sp_obtener_deudaAsync();
-
-            foreach (var de in deudas.OrderByDescending(x => x.fecha_deuda))
+            deudas = _dbcontext.DeudasRegistradas.ToList();
+            var clientes = _dbcontext.Clientes.ToList().Where(x => x.IdCliente == deudas.First().IdCliente).ToList(); 
+            foreach (var de in deudas.OrderByDescending(x => x.FechaDeuda))
             {   
                 string estadoDeuda = "";
                 
-                if (de.saldada.Value == true)
+                if (de.Saldada == true)
                 {
-                    estadoDeuda = "Cancelada"; 
-
+                    estadoDeuda = "Cancelada";   
                 } 
                 else
                 {
                     estadoDeuda = "Activa";
-                }
+                } 
 
-                dtDeuda.Rows.Add(de.id_deuda, de.fecha_deuda, de.nombre, de.apellido, de.total, estadoDeuda); 
+                dtDeuda.Rows.Add(de.IdDeuda, de.FechaDeuda, clientes.Select(x => x.Nombre), clientes.Select(x => x.Apellido), de.Total, estadoDeuda); 
             } 
 
             foreach (DataGridViewRow row in dgvDeuda.Rows)
@@ -102,6 +105,46 @@ namespace Carniceria
                     row.DefaultCellStyle.BackColor = lightGreen;
                 }
             }
+        }
+        public async Task<(List<DetalleDeudaDto>, List<PagoDto>)> ObtenerDetalleDeudaAsync(int idDeuda)
+        {
+            // Traer estado de la deuda (saldada)
+            var deuda = await _dbcontext.DeudasRegistradas
+                .Where(d => d.IdDeuda == idDeuda)
+                .FirstOrDefaultAsync();
+
+            bool saldada = deuda?.Saldada == true;
+
+            // Traer productos vinculados a la deuda
+            var detalleProductos = await _dbcontext.DetalleDeudaProductos
+                .Where(d => d.IdDeuda == idDeuda)
+                .Join(
+                    _dbcontext.Productos,          // tabla productos
+                    d => d.IdProducto,             // FK en detalle_deuda_productos
+                    p => p.IdProducto,             // PK en productos
+                    (d, p) => new DetalleDeudaDto
+                    {
+                        NombreProducto = p.NombreProducto,
+                        Cantidad = d.Cantidad,
+                        Kilos = d.Kilos,
+                        MontoProducto = d.MontoProducto,
+                        Saldada = saldada
+                    }
+                )
+                .ToListAsync();
+
+            // Traer pagos de la deuda
+            var pagos = await _dbcontext.Pagos
+                .Where(p => p.IdDeuda == idDeuda)
+                .Select(p => new PagoDto
+                {
+                    IdParciales = p.IdParciales,
+                    FechaPago = p.FechaPago,
+                    MontoPagado = p.MontoPagado 
+                })
+                .ToListAsync();
+
+            return (detalleProductos, pagos);
         }
         private async void button1_Click(object sender, EventArgs e)
         {
@@ -119,21 +162,23 @@ namespace Carniceria
             DataGridViewRow row = dgvDeuda.SelectedRows[0];
 
             int idDeuda = Convert.ToInt32(row.Cells["Id_Deuda"].Value);
-            var detalle = await _dbcontext.Procedures.sp_obtener_detalle_deudaAsync(idDeuda);
-           
+            var detalle = _dbcontext.DetalleDeudaProductos.Where(x => x.IdDeuda == idDeuda);
+            var producto = _dbcontext.Productos.ToList();
             foreach (var item in detalle)
-            {   
-                if (item.nombre_producto != null)
+            {
+                var prod = producto.Where(x => x.IdProducto == item.IdProducto).FirstOrDefault();
+                if (prod.NombreProducto != null)
                 {
-                    dtDeudaDetalle.Rows.Add(item.nombre_producto, item.cantidad, item.kilos, item.monto_producto);
+                    dtDeudaDetalle.Rows.Add(prod.NombreProducto, item.Cantidad, item.Kilos, item.MontoProducto);
                 }
-                
+                /*
                 if (item.id_parciales != null)
                 {
                     dtPagos.Rows.Add(item.id_parciales, item.fecha_pago, item.monto_pagado);
                     montoAcumulado += item.monto_pagado.Value;
                     
                 }
+                */
             }
 
             lblFaltante.Text = montoAcumulado.ToString();
@@ -169,19 +214,34 @@ namespace Carniceria
                 return;
             }
 
-            OutputParameter<int?> pagoEjecutado = new OutputParameter<int?>();
-            await _dbcontext.Procedures.sp_insertar_pagoAsync(idDeuda, pago,pagoEjecutado);
+            var deuda = await ObtenerDetalleDeudaAsync(idDeuda);
 
-            if (pagoEjecutado.Value == 1)
+            decimal total = deuda.Item2.Sum(p => (decimal?)p.MontoPagado) ?? 0m; 
+            
+            if (pago <= total && (total + pago) <= total)
             {
-                MessageBox.Show($"Se abono {pago} sobre la deuda correctamente");
-                return;
-            }  
-            else if (pagoEjecutado.Value == 0)
-            {
-                MessageBox.Show($"No se pudo efectuar el pago, posiblemente el monto a abonar sea mayor a la deuda");
-                return;
-            }
+                // Insertar pago
+                var pagoNuevo = new PagoDto
+                {
+                    IdDeuda = idDeuda,
+                    MontoPagado = pago,
+                    FechaPago = DateTime.Now
+                };
+                _dbcontext.Pagos.Add(pagoNuevo);
+
+                // Actualizar total abonado
+                total += pago;
+                /*
+                // Si está totalmente saldada
+                if (total == total)
+                {
+                    deuda.Item1.sel = true;
+                    _dbcontext.DeudasRegistradas.Update(deuda);
+                }
+
+                await _dbcontext.SaveChangesAsync(); 
+                */
+            } 
 
             label4.Text = "";
             label7.Text = "";

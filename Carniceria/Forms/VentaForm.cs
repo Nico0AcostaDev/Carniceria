@@ -1,8 +1,10 @@
 ﻿using Carniceria.Dto;
 using Carniceria.Models;
+using Carniceria.Querys;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Globalization;
-using System.Text.RegularExpressions;
+using static Carniceria.Querys.DeudaService;
 
 namespace Carniceria
 {
@@ -18,10 +20,14 @@ namespace Carniceria
         private decimal total = new decimal();
         private string tipo = "";
         private int producto_id = new int();
+        private readonly StockService _stockService;
+        private readonly DeudaService _deudaService;
         public VentaForm(CarniceriaContext dbcontext)
         {
             InitializeComponent(); 
             _dbcontext = dbcontext;
+            _stockService = new StockService(dbcontext);
+            _deudaService = new DeudaService(dbcontext);
 
             dtProductos.Columns.Add("Id_Productos", typeof(int));
             dtProductos.Columns.Add("Nombre Producto", typeof(string));
@@ -63,19 +69,19 @@ namespace Carniceria
         }
         private async void CargarGridAndCombo()
         {
-            var productos = await _dbcontext.Procedures.sp_obtener_productosAsync();
-            var clientes = await _dbcontext.Procedures.sp_obtener_clientesAsync();
+            var productos = await _dbcontext.Productos.ToListAsync();
+            var clientes = await _dbcontext.Clientes.ToListAsync();
 
             foreach (var product in productos)
             {
-                dtProductos.Rows.Add(product.id_producto, product.nombre_producto, product.precio, product.tipo);
+                dtProductos.Rows.Add(product.IdProducto, product.NombreProducto, product.Precio, product.Tipo);
             }
             var dataSource = new List<Cliente>();
 
 
             foreach (var cli in clientes)
             {
-                dataSource.Add(new Cliente() { Nombre = cli.nombre, IdCliente = cli.id_cliente });
+                dataSource.Add(new Cliente() { Nombre = cli.Nombre, IdCliente = cli.IdCliente });
             }
 
             this.comboBox1.DataSource = dataSource;
@@ -134,33 +140,20 @@ namespace Carniceria
 
             if (!validarCarrito(textBox1.Text, textBox2.Text, textBox4.Text))
                 return;
+
             int stockDisponible = 0;
-            if (tipo == "P") // 👈 solo consulto stock si es producto
-            {
-                // Consultar stock disponible usando el SP
-                var stockResult = await _dbcontext.Procedures.sp_consultar_stock_productoAsync(producto_id);
-                
-                bool hayStock = false;
 
-                if (stockResult.Any())
-                {
-                    var stockRow = stockResult.First();
-                    if (stockRow.stock_disponible > 0)
-                    {
-                        stockDisponible = (int)stockRow.stock_disponible;
-                        hayStock = true;
-                    }
-                    else
-                    {
-                        hayStock = false;
-                    }
-                }
+            if (tipo == "P")  
+            { 
+                var stockResult =  _stockService.ConsultarStockProducto(producto_id); 
 
-                if (!hayStock)
+                if (stockResult == null || stockResult.StockDisponible <= 0)
                 {
                     MessageBox.Show("El producto se agotó.", "Atención!", MessageBoxButtons.OK);
                     return;
                 }
+                 
+                stockDisponible = stockResult.StockDisponible;
             }
 
             producto.precio_unitario = Convert.ToDecimal(textBox4.Text.Replace(",", ""));
@@ -213,7 +206,7 @@ namespace Carniceria
         }
 
         public void addCompraToGrid(Producto producto)
-        {
+        { 
             productList.Add(producto);
             dtDgvVenta.Rows.Add(producto.nombre_producto, producto.cantidad, producto.kilos, producto.precio_unitario, producto.subtotal);
         }
@@ -329,18 +322,29 @@ namespace Carniceria
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question
             );
-
+             
             if (result == DialogResult.Yes)
             {
-                OutputParameter<int?> id_deuda = new OutputParameter<int?>();
-                await _dbcontext.Procedures.sp_insertar_deudaAsync(id_cliente, total, id_deuda);
-                decimal acumulador = 0m;
-                foreach (var pdl in productList)
+                var nuevaDeuda = new CrearDeudaDto
                 {
-                    acumulador += pdl.subtotal;
-                    await _dbcontext.Procedures.sp_insertar_deuda_detalleAsync(id_deuda._value, pdl.idProducto, pdl.kilos, pdl.cantidad, pdl.subtotal);
+                    IdCliente = id_cliente,
+                    Total = 222.00m,
+                    Saldada = false,
+                    Productos = new List<CrearDeudaProductoDto>()
+                };
+                 
+                foreach (var p in productList)
+                { 
+                    nuevaDeuda.Productos.Add(new CrearDeudaProductoDto
+                    {
+                        IdProducto = p.idProducto,
+                        Kilos = p.kilos,
+                        Cantidad = p.cantidad,
+                        MontoProducto = p.subtotal
+                    });
                 }
-            }
+                int idDeuda = await _deudaService.CrearDeudaAsync(nuevaDeuda); 
+            } 
 
             Close();
         }
@@ -368,21 +372,20 @@ namespace Carniceria
         {
             int cursorPosition = textBox4.SelectionStart;
 
-            string text = textBox4.Text.Replace(",", "");
-            if (text.Length > 4)
-                text = text.Substring(0, 4);
-            if (text.Length == 4)
-            {
-                text = text.Insert(1, ",");
-            }
-            else if (text.Length == 5)
-            {
-                text = text.Insert(2, ",");
-            }
+            // Quitar todo lo que no sea número
+            string digits = new string(textBox4.Text.Where(char.IsDigit).ToArray());
 
-            textBox4.Text = text;
+            if (string.IsNullOrEmpty(digits))
+                digits = "0";
 
-            textBox4.SelectionStart = cursorPosition + (textBox4.Text.Length - text.Length);
+            // Convertir a decimal con 2 decimales
+            decimal value = decimal.Parse(digits) / 100m;
+
+            // Formatear como número con 2 decimales
+            textBox4.Text = value.ToString("0.00", CultureInfo.InvariantCulture);
+
+            // Poner el cursor al final
+            textBox4.SelectionStart = textBox4.Text.Length;
         }
 
         #region NotUsing

@@ -1,4 +1,5 @@
-﻿using Carniceria.Models; 
+﻿using Carniceria.Models;
+using Carniceria.Models.Carniceria.Dto;
 namespace Carniceria.Forms.Altas
 {
     public partial class Clientes : Form
@@ -48,7 +49,7 @@ namespace Carniceria.Forms.Altas
                 }
             }
         }
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             // Validaciones obligatorias
             if (string.IsNullOrWhiteSpace(Nombretxt.Text))
@@ -76,15 +77,20 @@ namespace Carniceria.Forms.Altas
 
             try
             {
-                // Llamada al SP
-                  _dbcontext.Procedures.sp_insertar_clienteAsync(
-                    Nombretxt.Text,
-                    Apellidotxt.Text,
-                    telefono,
-                    Infotxt.Text,
-                    direccion,
-                    email
-                );
+                var nuevoCliente = new ClienteDto
+                {
+                    Nombre = Nombretxt.Text,
+                    Apellido = Apellidotxt.Text,
+                    Telefono = telefono,
+                    Direccion = direccion,
+                    Email = email,
+                    InfoRelevante = Infotxt.Text,
+                    FechaRegistro = DateTime.Now,
+                    CodEstado = "A"  
+                };
+
+                _dbcontext.Clientes.Add(nuevoCliente);
+                await _dbcontext.SaveChangesAsync();
 
                 MessageBox.Show("Usuario registrado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.Close();

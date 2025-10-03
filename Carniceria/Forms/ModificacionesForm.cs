@@ -55,12 +55,13 @@ namespace Carniceria
 
         private async void CargarGridAndCombo()
         {
-            var stockProductos = await _dbcontext.Procedures.sp_obtener_stock_con_precioAsync();
+            /*var stockProductos = await _dbcontext.Procedures.sp_obtener_stock_con_precioAsync();
 
             foreach (var sp in stockProductos)
             {
                 dtvProductos.Rows.Add(sp.id_producto, sp.nombre_producto, sp.cantidad, sp.precio, sp.fecha_actualizacion, sp.cod_estado);
             }
+            */
         }
 
         private void ModificacionesForm_Load(object sender, EventArgs e)
@@ -167,7 +168,7 @@ namespace Carniceria
             string estadoParam = estado != estadoOriginal ? estado : null;
 
             try
-            {
+            {/*
                 // Llamada al SP
                 await _dbcontext.Procedures.sp_editar_productoAsync(
                     id_producto,
@@ -176,7 +177,7 @@ namespace Carniceria
                     precioParam,
                     estadoParam
                 );
-
+                */
                 // Si todo sale bien
                 MessageBox.Show("✅ Producto actualizado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
 

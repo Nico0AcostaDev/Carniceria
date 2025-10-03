@@ -1,5 +1,5 @@
 ﻿using Carniceria.Models;
-using System.Windows.Forms;
+using Carniceria.Models.Carniceria.Dto; 
 
 namespace Carniceria.Forms
 {
@@ -12,10 +12,7 @@ namespace Carniceria.Forms
             InitializeComponent();
             CargarComboTipo();
             AplicarEstilos();
-        }
-
-
-
+        } 
         private void CargarComboTipo()
         {
             tipoComboBox.Items.Clear();
@@ -92,13 +89,29 @@ namespace Carniceria.Forms
 
             try
             {
-                // --- LLAMADA AL SP ---
-                await _dbcontext.Procedures.sp_insertar_producto_con_stockAsync(
-                    nombreProdTxt.Text,
-                    tipoSeleccionado,
-                    decimal.Parse(cantidadTxt.Text),          // decimal
-                    int.Parse(cantidadTxt.Text)
-                );
+                var nuevoProducto = new ProductoDto 
+                {
+                    NombreProducto = nombreProdTxt.Text,
+                    Precio = decimal.Parse(PrecioTxt.Text),
+                    Tipo = tipoSeleccionado, // "C" carne, "P" producto, etc.
+                    CodEstado = "A"
+                };
+
+                _dbcontext.Productos.Add(nuevoProducto);
+                await _dbcontext.SaveChangesAsync(); // Asigna IdProducto automáticamente
+
+                // Crear stock inicial
+                var stock = new StockProductoDto
+                {
+                    IdProducto = nuevoProducto.IdProducto,
+                    Cantidad = int.Parse(cantidadTxt.Text),
+                    Descripcion = descripcionTxt.Text, // si hay campo de descripción
+                    CodEstado = "A",
+                    FechaActualizacion = DateTime.Now
+                };
+
+                _dbcontext.StockProductos.Add(stock);
+                await _dbcontext.SaveChangesAsync();
 
                 MessageBox.Show("✅ Producto insertado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.Close();
