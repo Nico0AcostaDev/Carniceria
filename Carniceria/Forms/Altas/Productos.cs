@@ -1,5 +1,4 @@
-﻿using Carniceria.Models;
-using System.Windows.Forms;
+﻿using Carniceria.Models; 
 
 namespace Carniceria.Forms
 {
@@ -11,10 +10,7 @@ namespace Carniceria.Forms
             _dbcontext = dbcontext;
             InitializeComponent();
             CargarComboTipo();
-            AplicarEstilos();
         }
-
-
 
         private void CargarComboTipo()
         {
@@ -26,7 +22,6 @@ namespace Carniceria.Forms
             tipoComboBox.ValueMember = "Value";
         }
 
-        // Validación en tiempo real: solo números en cantidad
         private void cantidadTxt_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
@@ -34,8 +29,6 @@ namespace Carniceria.Forms
                 e.Handled = true;
             }
         }
-
-        // Validación en tiempo real: solo números y coma/punto en precio
         private void precioTxt_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != ',' && e.KeyChar != '.')
@@ -43,7 +36,6 @@ namespace Carniceria.Forms
                 e.Handled = true;
             }
 
-            // Solo un separador decimal
             if ((e.KeyChar == ',' || e.KeyChar == '.') && ((sender as TextBox).Text.Contains(",") || (sender as TextBox).Text.Contains(".")))
             {
                 e.Handled = true;
@@ -52,7 +44,6 @@ namespace Carniceria.Forms
 
         private async void AceptarBtn_Click(object sender, EventArgs e)
         {
-            // Validaciones
             if (string.IsNullOrWhiteSpace(nombreProdTxt.Text))
             {
                 MessageBox.Show("Debe ingresar el nombre del producto.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -92,63 +83,19 @@ namespace Carniceria.Forms
 
             try
             {
-                // --- LLAMADA AL SP ---
                 await _dbcontext.Procedures.sp_insertar_producto_con_stockAsync(
                     nombreProdTxt.Text,
                     tipoSeleccionado,
-                    decimal.Parse(cantidadTxt.Text),          // decimal
+                    decimal.Parse(cantidadTxt.Text),
                     int.Parse(cantidadTxt.Text)
                 );
 
-                MessageBox.Show("✅ Producto insertado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Producto insertado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"❌ Error al insertar producto: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void AplicarEstilos()
-        {
-            this.BackColor = Color.WhiteSmoke;
-            this.Font = new Font("Segoe UI", 10);
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle; // más formal
-            this.MaximizeBox = false;
-
-            // --- Iteramos todos los controles ---
-            foreach (Control c in this.Controls)
-            {
-                if (c is Button btn)
-                {
-                    btn.BackColor = Color.FromArgb(90, 50, 110); // violeta oscuro
-                    btn.ForeColor = Color.White;
-                    btn.FlatStyle = FlatStyle.Flat;
-                    btn.FlatAppearance.BorderSize = 0;
-                    btn.Cursor = Cursors.Hand;
-
-                    btn.MouseEnter += (s, e) => btn.BackColor = Color.FromArgb(110, 70, 140);
-                    btn.MouseLeave += (s, e) => btn.BackColor = Color.FromArgb(90, 50, 110);
-                }
-                else if (c is Label lbl)
-                {
-                    lbl.ForeColor = Color.FromArgb(50, 30, 70);
-                    lbl.Font = new Font("Segoe UI", 10, FontStyle.Regular);
-                }
-                else if (c is ComboBox cb)
-                {
-                    cb.BackColor = Color.White;
-                    cb.ForeColor = Color.FromArgb(50, 30, 70);
-                    cb.DropDownStyle = ComboBoxStyle.DropDownList;
-                    cb.FlatStyle = FlatStyle.Flat;
-                }
-                else if (c is TextBox tb)
-                {
-                    tb.BackColor = Color.White;
-                    tb.ForeColor = Color.FromArgb(50, 30, 70);
-                    tb.BorderStyle = BorderStyle.FixedSingle;
-                }
+                MessageBox.Show($"Error al insertar producto: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

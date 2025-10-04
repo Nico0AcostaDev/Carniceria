@@ -21,6 +21,23 @@ CREATE TABLE productos (
 	cod_estado varchar(1)
 ); 
 
+CREATE TABLE stock_productos (
+    id_stock INT IDENTITY(1,1) PRIMARY KEY,
+    id_producto INT NOT NULL,
+	descripcion VARCHAR(255),
+    cantidad INT,
+    fecha_actualizacion DATETIME NOT NULL DEFAULT GETDATE(),
+    cod_estado VARCHAR(1)
+);
+
+CREATE TABLE historial_precios (
+    id_historial INT IDENTITY(1,1) PRIMARY KEY,
+    id_producto INT NOT NULL,
+    precio_nuevo DECIMAL(10, 2) NOT NULL,
+    fecha_actualizacion DATETIME NOT NULL DEFAULT GETDATE(), 
+    cod_estado VARCHAR(1) DEFAULT 'A'
+); 
+
 CREATE TABLE clientes ( 
     id_cliente INT IDENTITY(1,1) PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -59,6 +76,13 @@ CREATE TABLE pagos (
  
 --tipo "C" carne, "p" productos
 
+ALTER TABLE stock_productos
+ADD CONSTRAINT fk_stock_productos
+FOREIGN KEY (id_producto) REFERENCES productos(id_producto);
+
+ALTER TABLE historial_precios
+ADD CONSTRAINT fk_historial_producto
+FOREIGN KEY (id_producto) REFERENCES productos(id_producto);
  
 ALTER TABLE usuarios
 ADD CONSTRAINT usuarios_roles
@@ -80,19 +104,6 @@ ALTER TABLE pagos
 ADD CONSTRAINT pagos_deudas_registradas
 FOREIGN KEY (id_deuda) REFERENCES deudas_registradas(id_deuda); 
 
-INSERT INTO productos (nombre_producto, precio, tipo,cod_estado)
-VALUES
-('Bife de chorizo', 5500.00, 'C','A'),   
-('Asado de tira', 6400.00, 'C','A'),
-('Lavandina', 1080.00, 'P','A'),        
-('Detergente', 1050.00, 'P','A'),
-('Jabón en polvo', 1120.00, 'P','A');
-
-INSERT INTO clientes (nombre, apellido, telefono, direccion, email, info_relevante, fecha_registro,cod_estado)
-VALUES 
-('Juan', 'Pérez', '123456789', 'Calle Falsa 123', 'juan.perez@example.com', 'Cliente preferencial', GETDATE(),'A'),
-('María', 'González', '987654321', 'Avenida Siempre Viva 456', 'maria.gonzalez@example.com', 'Cliente nuevo', GETDATE(),'A'),
-('Carlos', 'López', '555555555', 'Boulevard de los Sueños 789', 'carlos.lopez@example.com', 'Cliente frecuente', GETDATE(),'A');
 
 CREATE PROCEDURE sp_obtener_clientes
 AS
@@ -155,3 +166,10 @@ BEGIN
         INSERT INTO detalle_deuda_productos(id_deuda,id_producto,kilos,cantidad,monto_producto)
         VALUES (@id_deuda,@id_producto,); 
 END; 
+  
+ 
+sp_obtener_stock_con_precio 
+sp_insertar_producto_con_stock
+alta_producto 
+editar_producto
+obtener_detalle_deuda

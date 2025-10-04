@@ -1,8 +1,7 @@
 ﻿using Carniceria.Dto;
 using Carniceria.Models;
 using System.Data;
-using System.Globalization;
-using System.Text.RegularExpressions;
+using System.Globalization; 
 
 namespace Carniceria
 {
@@ -20,7 +19,7 @@ namespace Carniceria
         private int producto_id = new int();
         public VentaForm(CarniceriaContext dbcontext)
         {
-            InitializeComponent(); 
+            InitializeComponent();
             _dbcontext = dbcontext;
 
             dtProductos.Columns.Add("Id_Productos", typeof(int));
@@ -36,8 +35,7 @@ namespace Carniceria
 
             dgvProductos.DataSource = dtProductos;
             dgvVenta.DataSource = dtDgvVenta;
-            ajustesFormatoDiseñoDgv(); 
-            AplicarEstilosForm();
+            ajustesFormatoDiseñoDgv();
         }
         private void ajustesFormatoDiseñoDgv()
         {
@@ -75,7 +73,7 @@ namespace Carniceria
 
             foreach (var cli in clientes)
             {
-                dataSource.Add(new Cliente() { Nombre = cli.nombre, IdCliente = cli.id_cliente });
+                dataSource.Add(new Cliente() { Nombre = cli.nombre, Apellido = cli.apellido, IdCliente = cli.id_cliente, InfoRelevante = cli.info_relevante });
             }
 
             this.comboBox1.DataSource = dataSource;
@@ -87,7 +85,7 @@ namespace Carniceria
         private void VentaForm_Load(object sender, EventArgs e)
         {
             CargarGridAndCombo();
-        }        
+        }
         private void dgvProductos_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             DataGridViewRow row = dgvProductos.SelectedRows[0];
@@ -106,7 +104,7 @@ namespace Carniceria
                 label6.Text = "Precio por kilo";
                 textBox4.Text = "";
                 textBox4.Enabled = true;
-            } 
+            }
             else
             {
                 label8.Text = "Cantidad";
@@ -137,9 +135,8 @@ namespace Carniceria
             int stockDisponible = 0;
             if (tipo == "P") // 👈 solo consulto stock si es producto
             {
-                // Consultar stock disponible usando el SP
                 var stockResult = await _dbcontext.Procedures.sp_consultar_stock_productoAsync(producto_id);
-                
+
                 bool hayStock = false;
 
                 if (stockResult.Any())
@@ -171,7 +168,7 @@ namespace Carniceria
                 {
                     MessageBox.Show("Solo se permiten números en Kilos.", "Atención!", MessageBoxButtons.OK);
                     return;
-                } 
+                }
 
                 producto.kilos = kilos;
                 producto.subtotal = producto.precio_unitario * producto.kilos;
@@ -222,84 +219,23 @@ namespace Carniceria
             bool valida = true;
             if (string.IsNullOrEmpty(cantidad))
             {
-                MessageBox.Show($"No hay ningun producto a cobrar...", "Atencion!", MessageBoxButtons.OK);
+                MessageBox.Show($"No hay ningun producto a cobrar...", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 valida = false;
             }
 
             if (string.IsNullOrEmpty(precioUnitario))
             {
-                MessageBox.Show($"No hay monto a cobrar, por favor, insertar uno correcto", "Atencion!", MessageBoxButtons.OK);
+                MessageBox.Show($"No hay monto a cobrar, por favor, insertar uno correcto", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 valida = false;
             }
 
             if (string.IsNullOrEmpty(producto))
             {
-                MessageBox.Show($"No hay producto asociado", "Atencion!", MessageBoxButtons.OK);
+                MessageBox.Show($"No hay producto asociado", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 valida = false;
             }
 
             return valida;
-        }
-        private void AplicarEstilosForm()
-        {
-            // Fondo del form
-            this.BackColor = Color.WhiteSmoke;
-            this.Font = new Font("Segoe UI", 10);
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.Text = "Carnicería - Venta de Productos";
-
-            // Botones estilo moderno
-            foreach (Control c in this.Controls)
-            {
-                if (c is Button btn)
-                {
-                    btn.BackColor = Color.FromArgb(90, 50, 110); // violeta
-                    btn.ForeColor = Color.White;
-                    btn.FlatStyle = FlatStyle.Flat;
-                    btn.FlatAppearance.BorderSize = 0;
-
-                    btn.MouseEnter += (s, e) => btn.BackColor = Color.FromArgb(110, 70, 140);
-                    btn.MouseLeave += (s, e) => btn.BackColor = Color.FromArgb(90, 50, 110);
-                }
-                else if (c is Label lbl)
-                {
-                    lbl.ForeColor = Color.FromArgb(50, 30, 70); // texto oscuro violeta
-                }
-                else if (c is ComboBox cb)
-                {
-                    cb.BackColor = Color.White;
-                    cb.ForeColor = Color.FromArgb(50, 30, 70);
-                }
-                else if (c is TextBox tb)
-                {
-                    tb.BackColor = Color.White;
-                    tb.ForeColor = Color.FromArgb(50, 30, 70);
-                }
-            }
-
-            // DataGridViews estilo moderno
-            Color rowAlt = Color.FromArgb(240, 230, 250);
-            Color rowNormal = Color.White;
-
-            foreach (DataGridView dgv in new DataGridView[] { dgvProductos, dgvVenta })
-            {
-                dgv.EnableHeadersVisualStyles = false;
-                dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(90, 50, 110);
-                dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-                dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 10);
-                dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-                dgv.RowHeadersVisible = false;
-                dgv.AllowUserToResizeRows = false;
-
-                dgv.DefaultCellStyle.BackColor = rowNormal;
-                dgv.AlternatingRowsDefaultCellStyle.BackColor = rowAlt;
-                dgv.DefaultCellStyle.ForeColor = Color.FromArgb(50, 30, 70);
-                dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(110, 70, 140);
-                dgv.DefaultCellStyle.SelectionForeColor = Color.White;
-                dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                dgv.ReadOnly = true;
-            }
         }
 
         private async void btnAceptar_Click(object sender, EventArgs e)
@@ -308,7 +244,7 @@ namespace Carniceria
 
             if (string.IsNullOrEmpty(id_cliente.ToString()))
             {
-                MessageBox.Show($"Debemos seleccionar un cliente", "Atencion!", MessageBoxButtons.OK);
+                MessageBox.Show($"Debemos seleccionar un cliente", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -319,9 +255,9 @@ namespace Carniceria
 
             if (total == 0)
             {
-                MessageBox.Show($"No hay productos a cobrar", "Atencion!", MessageBoxButtons.OK);
+                MessageBox.Show($"No hay productos a cobrar", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
-            } 
+            }
 
             DialogResult result = MessageBox.Show(
                 $"El total de la deuda es ${total} pesos",
@@ -385,15 +321,14 @@ namespace Carniceria
             textBox4.SelectionStart = cursorPosition + (textBox4.Text.Length - text.Length);
         }
 
-        #region NotUsing
-        private void dgvProductos_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if (comboBox1.SelectedItem is Cliente clienteSeleccionado)
+            {
+                lblNombre.Text = clienteSeleccionado.Nombre;
+                lblApellido.Text = clienteSeleccionado.Apellido;
+                lblInfo.Text = clienteSeleccionado.InfoRelevante;
+            }
         }
-        private void dgvProductos_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-
-        }
-        #endregion
     }
 }

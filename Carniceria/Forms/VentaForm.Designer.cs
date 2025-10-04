@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VentaForm));
             comboBox1 = new ComboBox();
             label1 = new Label();
             dgvProductos = new DataGridView();
@@ -46,6 +45,9 @@
             textBox1 = new TextBox();
             textBox2 = new TextBox();
             btnAceptar = new Button();
+            lblNombre = new Label();
+            lblApellido = new Label();
+            lblInfo = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvVenta).BeginInit();
             panel1.SuspendLayout();
@@ -59,6 +61,7 @@
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(292, 29);
             comboBox1.TabIndex = 0;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // label1
             // 
@@ -73,21 +76,19 @@
             // dgvProductos
             // 
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvProductos.Location = new Point(12, 100);
+            dgvProductos.Location = new Point(12, 160);
             dgvProductos.MultiSelect = false;
             dgvProductos.Name = "dgvProductos";
             dgvProductos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvProductos.Size = new Size(437, 402);
+            dgvProductos.Size = new Size(437, 335);
             dgvProductos.TabIndex = 2;
-            dgvProductos.CellClick += dgvProductos_CellClick;
             dgvProductos.CellContentClick += dgvProductos_CellContentClick;
-            dgvProductos.CellMouseClick += dgvProductos_CellMouseClick;
             // 
             // label2
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(12, 63);
+            label2.Location = new Point(12, 136);
             label2.Name = "label2";
             label2.Size = new Size(80, 21);
             label2.TabIndex = 3;
@@ -96,16 +97,16 @@
             // dgvVenta
             // 
             dgvVenta.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvVenta.Location = new Point(508, 63);
+            dgvVenta.Location = new Point(506, 44);
             dgvVenta.Name = "dgvVenta";
-            dgvVenta.Size = new Size(446, 168);
+            dgvVenta.Size = new Size(446, 235);
             dgvVenta.TabIndex = 4;
             // 
             // label3
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(508, 18);
+            label3.Location = new Point(506, 15);
             label3.Name = "label3";
             label3.Size = new Size(49, 21);
             label3.TabIndex = 5;
@@ -122,7 +123,7 @@
             panel1.Controls.Add(label8);
             panel1.Controls.Add(textBox1);
             panel1.Controls.Add(textBox2);
-            panel1.Location = new Point(508, 249);
+            panel1.Location = new Point(506, 297);
             panel1.Name = "panel1";
             panel1.Size = new Size(446, 152);
             panel1.TabIndex = 25;
@@ -216,7 +217,7 @@
             // btnAceptar
             // 
             btnAceptar.Font = new Font("Segoe UI", 12F);
-            btnAceptar.Location = new Point(819, 429);
+            btnAceptar.Location = new Point(817, 457);
             btnAceptar.Name = "btnAceptar";
             btnAceptar.Size = new Size(135, 38);
             btnAceptar.TabIndex = 24;
@@ -224,12 +225,42 @@
             btnAceptar.UseVisualStyleBackColor = true;
             btnAceptar.Click += btnAceptar_Click;
             // 
+            // lblNombre
+            // 
+            lblNombre.AutoSize = true;
+            lblNombre.Location = new Point(12, 56);
+            lblNombre.Name = "lblNombre";
+            lblNombre.Size = new Size(38, 15);
+            lblNombre.TabIndex = 26;
+            lblNombre.Text = "label7";
+            // 
+            // lblApellido
+            // 
+            lblApellido.AutoSize = true;
+            lblApellido.Location = new Point(12, 83);
+            lblApellido.Name = "lblApellido";
+            lblApellido.Size = new Size(38, 15);
+            lblApellido.TabIndex = 27;
+            lblApellido.Text = "label9";
+            // 
+            // lblInfo
+            // 
+            lblInfo.AutoSize = true;
+            lblInfo.Location = new Point(12, 109);
+            lblInfo.Name = "lblInfo";
+            lblInfo.Size = new Size(44, 15);
+            lblInfo.TabIndex = 28;
+            lblInfo.Text = "label10";
+            // 
             // VentaForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.GradientInactiveCaption;
-            ClientSize = new Size(985, 514);
+            ClientSize = new Size(964, 499);
+            Controls.Add(lblInfo);
+            Controls.Add(lblApellido);
+            Controls.Add(lblNombre);
             Controls.Add(panel1);
             Controls.Add(btnAceptar);
             Controls.Add(label3);
@@ -239,7 +270,6 @@
             Controls.Add(label1);
             Controls.Add(comboBox1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "VentaForm";
             Text = "VentaForm";
@@ -271,5 +301,8 @@
         private TextBox textBox2;
         private Button btnAceptar;
         private Label label5;
+        private Label lblNombre;
+        private Label lblApellido;
+        private Label lblInfo;
     }
 }

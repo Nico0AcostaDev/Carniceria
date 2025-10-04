@@ -165,7 +165,7 @@ namespace Carniceria
 
             if (pago == 0m)
             {
-                MessageBox.Show("Por favor, ingresar montos mayores a 0");
+                MessageBox.Show("Por favor, ingresar montos mayores a 0", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -174,12 +174,12 @@ namespace Carniceria
 
             if (pagoEjecutado.Value == 1)
             {
-                MessageBox.Show($"Se abono {pago} sobre la deuda correctamente");
+                MessageBox.Show($"Se abono {pago} sobre la deuda correctamente", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }  
             else if (pagoEjecutado.Value == 0)
             {
-                MessageBox.Show($"No se pudo efectuar el pago, posiblemente el monto a abonar sea mayor a la deuda");
+                MessageBox.Show($"No se pudo efectuar el pago, posiblemente el monto a abonar sea mayor a la deuda", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -191,13 +191,6 @@ namespace Carniceria
             dtDeudaDetalle.Clear();
             dtPagos.Clear();
             CargarGridAndCombo();
-        }
-
-        #region NotUsing
-        private async void button2_Click(object sender, EventArgs e)
-        {
-
-        }
-        #endregion
+        } 
     }
 }

@@ -1,6 +1,8 @@
 using Carniceria.Forms;
 using Carniceria.Forms.Altas;
 using Carniceria.Models;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace Carniceria
 {
@@ -9,10 +11,9 @@ namespace Carniceria
         private readonly CarniceriaContext _dbcontext;
         public MainForm(CarniceriaContext dbcontext)
         {
-            InitializeComponent();
-            _dbcontext = dbcontext;
-            EstilosFormulario();
-        }
+            InitializeComponent(); 
+            _dbcontext = dbcontext;  
+        } 
 
         private void generarVentaToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -26,54 +27,6 @@ namespace Carniceria
             DeudasParcialesForm deudasParciales = new DeudasParcialesForm(_dbcontext);
             deudasParciales.ShowDialog();
             this.Show();
-        }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-
-        }
-        private void EstilosFormulario()
-        {
-            this.BackColor = Color.WhiteSmoke;
-            this.Font = new Font("Segoe UI", 10);
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.Text = "Sistema de Gestión";
-
-            if (this.MainMenuStrip != null)
-            {
-                Color violeta = Color.FromArgb(90, 50, 110);
-                Color violetaHover = Color.FromArgb(110, 70, 140);
-
-                this.MainMenuStrip.BackColor = violeta;
-                this.MainMenuStrip.ForeColor = Color.White;
-                this.MainMenuStrip.Font = new Font("Segoe UI Semibold", 10);
-                this.MainMenuStrip.RenderMode = ToolStripRenderMode.Professional;
-
-                foreach (ToolStripMenuItem item in this.MainMenuStrip.Items)
-                {
-                    item.BackColor = violeta;
-                    item.ForeColor = Color.White;
-
-                    // Hover
-                    item.MouseEnter += (s, e) => item.BackColor = violetaHover;
-                    item.MouseLeave += (s, e) => item.BackColor = violeta;
-
-                    // Todos los subitems igual
-                    foreach (ToolStripItem subItem in item.DropDownItems)
-                    {
-                        subItem.BackColor = violeta;
-                        subItem.ForeColor = Color.White;
-
-                        subItem.MouseEnter += (s, e) => subItem.BackColor = violetaHover;
-                        subItem.MouseLeave += (s, e) => subItem.BackColor = violeta;
-                    }
-                }
-            }
         }
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
@@ -95,5 +48,37 @@ namespace Carniceria
             clientesForm.ShowDialog();
             this.Show();
         }
+
+        private void Backupbtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                string backupFile = Path.Combine(desktopPath, $"MyDatabaseBackup_{DateTime.Now:yyyyMMdd_HHmmss}.bak");
+                string connectionString = _dbcontext.Database.GetDbConnection().ConnectionString;
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    string databaseName = connection.Database;
+
+                    string query = $"BACKUP DATABASE [{databaseName}] TO DISK = '{backupFile}'";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                        connection.Close();
+                    }
+                }
+
+                MessageBox.Show($"Backup creado exitosamente!\n\n{backupFile}",
+                                "Exito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message,
+                                "Backup Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        } 
     }
 }

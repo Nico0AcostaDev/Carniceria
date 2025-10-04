@@ -1,5 +1,4 @@
-﻿using Carniceria.Dto;
-using Carniceria.Models;
+﻿using Carniceria.Models;
 using System.Data;
 
 namespace Carniceria
@@ -104,7 +103,6 @@ namespace Carniceria
 
         private async void AceptarBtn_Click(object sender, EventArgs e)
         {
-            // Validaciones con estilo consistente
             if (string.IsNullOrWhiteSpace(descripcionTxt.Text))
             {
                 MessageBox.Show("Debe ingresar una descripción.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -129,14 +127,12 @@ namespace Carniceria
                 return;
             }
 
-            // Validar que cantidad sea numérica
             if (!decimal.TryParse(cantidadTxt.Text, out decimal cantidad))
             {
                 MessageBox.Show("Cantidad debe ser un valor numérico.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Validar estado
             string estado = estadoTxt.Text.ToUpper();
             if (estado != "A" && estado != "B")
             {
@@ -144,7 +140,6 @@ namespace Carniceria
                 return;
             }
 
-            // Verificar fila seleccionada
             if (dgvProductos.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Debe seleccionar un producto para editar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -178,7 +173,7 @@ namespace Carniceria
                 );
 
                 // Si todo sale bien
-                MessageBox.Show("✅ Producto actualizado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Producto actualizado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 dtvProductos.Clear();
                 CargarGridAndCombo();
@@ -187,7 +182,7 @@ namespace Carniceria
             catch (Exception ex)
             {
                 // Si ocurre un error
-                MessageBox.Show($"❌ Ocurrió un error al actualizar el producto:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Ocurrió un error al actualizar el producto:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

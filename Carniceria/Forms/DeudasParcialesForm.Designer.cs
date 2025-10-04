@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeudasParcialesForm));
             dgvDeuda = new DataGridView();
             label1 = new Label();
             label2 = new Label();
@@ -259,7 +258,6 @@
             Controls.Add(label1);
             Controls.Add(dgvDeuda);
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "DeudasParcialesForm";
             Text = "Deudas ";
