@@ -11,9 +11,9 @@ namespace Carniceria
         private readonly CarniceriaContext _dbcontext;
         public MainForm(CarniceriaContext dbcontext)
         {
-            InitializeComponent(); 
-            _dbcontext = dbcontext;  
-        } 
+            InitializeComponent();
+            _dbcontext = dbcontext;
+        }
 
         private void generarVentaToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -24,27 +24,27 @@ namespace Carniceria
 
         private void deudasParcialesToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            DeudasParcialesForm deudasParciales = new DeudasParcialesForm(_dbcontext);
+            DeudasForm deudasParciales = new DeudasForm(_dbcontext);
             deudasParciales.ShowDialog();
             this.Show();
         }
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            ModificacionesForm modifForm = new ModificacionesForm(_dbcontext);
+            ModProductos modifForm = new ModProductos(_dbcontext);
             modifForm.ShowDialog();
             this.Show();
         }
 
         private void productosToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Productos Productos = new Productos(_dbcontext);
+            AltProductos Productos = new AltProductos(_dbcontext);
             Productos.ShowDialog();
             this.Show();
         }
 
         private void clientesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Clientes clientesForm = new Clientes(_dbcontext);
+            AltClientes clientesForm = new AltClientes(_dbcontext);
             clientesForm.ShowDialog();
             this.Show();
         }
@@ -79,6 +79,13 @@ namespace Carniceria
                 MessageBox.Show("Error: " + ex.Message,
                                 "Backup Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void modificarProductoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ModProductos modifForm = new ModProductos(_dbcontext);
+            modifForm.ShowDialog();
+            this.Show();
         } 
     }
 }

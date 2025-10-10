@@ -34,6 +34,7 @@
             deudasToolStripMenuItem = new ToolStripMenuItem();
             deudasParcialesToolStripMenuItem1 = new ToolStripMenuItem();
             toolStripMenuItem1 = new ToolStripMenuItem();
+            modificarProductoToolStripMenuItem = new ToolStripMenuItem();
             altaToolStripMenuItem = new ToolStripMenuItem();
             productosToolStripMenuItem = new ToolStripMenuItem();
             clientesToolStripMenuItem = new ToolStripMenuItem();
@@ -84,8 +85,17 @@
             // 
             // toolStripMenuItem1
             // 
+            toolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { modificarProductoToolStripMenuItem });
             toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new Size(12, 20);
+            toolStripMenuItem1.Size = new Size(100, 20);
+            toolStripMenuItem1.Text = "Modificaciones";
+            // 
+            // modificarProductoToolStripMenuItem
+            // 
+            modificarProductoToolStripMenuItem.Name = "modificarProductoToolStripMenuItem";
+            modificarProductoToolStripMenuItem.Size = new Size(128, 22);
+            modificarProductoToolStripMenuItem.Text = "Productos";
+            modificarProductoToolStripMenuItem.Click += modificarProductoToolStripMenuItem_Click;
             // 
             // altaToolStripMenuItem
             // 
@@ -159,5 +169,6 @@
         private ToolStripMenuItem productosToolStripMenuItem;
         private ToolStripMenuItem clientesToolStripMenuItem;
         private Button Backupbtn;
+        private ToolStripMenuItem modificarProductoToolStripMenuItem;
     }
 }

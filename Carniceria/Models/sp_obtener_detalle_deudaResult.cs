@@ -15,6 +15,7 @@ namespace Carniceria.Models
         public decimal? monto_producto { get; set; }
         [StringLength(255)]
         public string nombre_producto { get; set; }
+        public DateTime? fecha_compra { get; set; }
         public DateTime? fecha_pago { get; set; }
         [Column("monto_pagado", TypeName = "decimal(10,2)")]
         public decimal? monto_pagado { get; set; }

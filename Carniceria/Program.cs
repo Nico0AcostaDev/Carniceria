@@ -37,7 +37,7 @@ namespace Carniceria
                 connectionString = desc.ConnectionString;
             } 
             CarniceriaContext dbContext = CarniceriaContext.CreateDbContext(connectionString); 
-            Application.Run(new MainForm(dbContext));
+            Application.Run(new MainForm(dbContext)); 
         } 
     }
 }
