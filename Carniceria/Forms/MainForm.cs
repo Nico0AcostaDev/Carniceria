@@ -53,32 +53,52 @@ namespace Carniceria
         {
             try
             {
-                string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                string backupFile = Path.Combine(desktopPath, $"MyDatabaseBackup_{DateTime.Now:yyyyMMdd_HHmmss}.bak");
+                string backupFolder = @"C:\BackupsSQL";
+
+                if (!Directory.Exists(backupFolder))
+                    Directory.CreateDirectory(backupFolder);
+
+                string backupFile = Path.Combine(
+                    backupFolder,
+                    $"Carniceria_{DateTime.Now:yyyyMMdd_HHmmss}.bak"
+                );
+
                 string connectionString = _dbcontext.Database.GetDbConnection().ConnectionString;
 
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
+                    connection.Open();
                     string databaseName = connection.Database;
 
-                    string query = $"BACKUP DATABASE [{databaseName}] TO DISK = '{backupFile}'";
+                    string query = $@"
+            BACKUP DATABASE [{databaseName}]
+            TO DISK = '{backupFile}'
+            WITH INIT
+        ";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        connection.Open();
                         command.ExecuteNonQuery();
-                        connection.Close();
                     }
                 }
 
-                MessageBox.Show($"Backup creado exitosamente!\n\n{backupFile}",
-                                "Exito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(
+                    $"Backup creado exitosamente:\n\n{backupFile}",
+                    "Éxito",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message,
-                                "Backup Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    ex.Message,
+                    "Backup Failed",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
+
         }
 
         private void modificarProductoToolStripMenuItem_Click(object sender, EventArgs e)
