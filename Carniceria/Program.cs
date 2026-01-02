@@ -9,35 +9,44 @@ namespace Carniceria
         [STAThread]
         static void Main()
         {
-            ApplicationConfiguration.Initialize(); 
-            string filePath = "";
+            ApplicationConfiguration.Initialize();
 
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            string filePath = Properties.Settings.Default.JsonConfigPath;
+
+            if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
             {
-                openFileDialog.Title = "Seleccionar appsettings.json";
-                openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-                openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                using OpenFileDialog dialog = new OpenFileDialog
+                {
+                    Title = "Seleccionar appsettings.json",
+                    Filter = "JSON files (*.json)|*.json",
+                    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+                };
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    filePath = openFileDialog.FileName;
-                }
-                else
-                {
-                    MessageBox.Show("Necesitas seleccionar un archivo para continuar.");
+                    MessageBox.Show("Debe seleccionar el archivo de configuración.");
                     return;
                 }
-            } 
-         
-            string connectionString = "";
-            using (StreamReader r = new StreamReader(filePath))
+
+                filePath = dialog.FileName;
+
+                Properties.Settings.Default.JsonConfigPath = filePath;
+                Properties.Settings.Default.Save();
+            }
+
+            var json = File.ReadAllText(filePath);
+
+            var config = JsonSerializer.Deserialize<jsonFile>(json);
+
+            if (config == null || string.IsNullOrWhiteSpace(config.ConnectionString))
             {
-                string json = r.ReadToEnd();
-                var desc = JsonSerializer.Deserialize<jsonFile>(json);
-                connectionString = desc.ConnectionString;
-            } 
-            CarniceriaContext dbContext = CarniceriaContext.CreateDbContext(connectionString); 
-            Application.Run(new MainForm(dbContext)); 
-        } 
+                MessageBox.Show("Configuración inválida.");
+                return;
+            }
+
+            var dbContext = CarniceriaContext.CreateDbContext(config.ConnectionString);
+            Application.Run(new MainForm(dbContext));
+
+        }
     }
 }
