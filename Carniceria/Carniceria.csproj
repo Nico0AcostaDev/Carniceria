@@ -6,7 +6,13 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>ChatGPT-Image-1-ene-2026_-21_38_27.ico</ApplicationIcon>
+    <AssemblyName>Rg Software</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="ChatGPT-Image-1-ene-2026_-21_38_27.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
