@@ -101,6 +101,7 @@
             dgvVenta.Name = "dgvVenta";
             dgvVenta.Size = new Size(446, 235);
             dgvVenta.TabIndex = 4;
+            dgvVenta.CellContentClick += dgvVenta_CellContentClick;
             // 
             // label3
             // 
@@ -175,7 +176,7 @@
             textBox4.Location = new Point(337, 69);
             textBox4.Name = "textBox4";
             textBox4.Size = new Size(88, 23);
-            textBox4.TabIndex = 21; 
+            textBox4.TabIndex = 21;
             // 
             // label4
             // 
@@ -202,7 +203,7 @@
             textBox1.Location = new Point(337, 34);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(88, 23);
-            textBox1.TabIndex = 15; 
+            textBox1.TabIndex = 15;
             // 
             // textBox2
             // 

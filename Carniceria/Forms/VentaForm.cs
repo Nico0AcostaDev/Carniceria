@@ -27,6 +27,7 @@ namespace Carniceria
             dtProductos.Columns.Add("Precio", typeof(decimal));
             dtProductos.Columns.Add("Tipo", typeof(string));
 
+            dtDgvVenta.Columns.Add("IdProducto", typeof(int));
             dtDgvVenta.Columns.Add("Nombre Producto", typeof(string));
             dtDgvVenta.Columns.Add("Cantidad", typeof(string));
             dtDgvVenta.Columns.Add("Kilos", typeof(decimal));
@@ -35,6 +36,7 @@ namespace Carniceria
 
             dgvProductos.DataSource = dtProductos;
             dgvVenta.DataSource = dtDgvVenta;
+            AgregarBotonEliminar();
             ajustesFormatoDiseñoDgv();
         }
         private void ajustesFormatoDiseñoDgv()
@@ -43,7 +45,8 @@ namespace Carniceria
             dgvProductos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvProductos.AllowUserToAddRows = false;
             dgvProductos.MultiSelect = false;
-            dgvProductos.Columns[0].Visible = false;
+            dgvProductos.Columns[0].Visible = false; 
+            dgvVenta.Columns["IdProducto"].Visible = false;
             dgvProductos.ReadOnly = true;
             dgvVenta.ReadOnly = true;
             dgvProductos.AllowUserToOrderColumns = false;
@@ -58,6 +61,21 @@ namespace Carniceria
             dgvVenta.AllowUserToOrderColumns = false;
             dgvVenta.AllowUserToResizeColumns = false;
             dgvVenta.AllowUserToResizeRows = false;
+
+        }
+        private void AgregarBotonEliminar()
+        {
+            if (dgvVenta.Columns.Contains("Eliminar"))
+                return;
+
+            DataGridViewButtonColumn btnEliminar = new DataGridViewButtonColumn();
+            btnEliminar.Name = "Eliminar";
+            btnEliminar.HeaderText = "";
+            btnEliminar.Text = "❌";
+            btnEliminar.UseColumnTextForButtonValue = true;
+            btnEliminar.Width = 40;
+
+            dgvVenta.Columns.Add(btnEliminar);
         }
         private async void CargarGridAndCombo()
         {
@@ -103,8 +121,6 @@ namespace Carniceria
                 label8.Text = "Kilos";
                 label6.Text = "Precio por kilo";
                 textBox4.Text = "";
-                decimal precio = Convert.ToDecimal(row.Cells["Precio"].Value);
-                textBox4.Text = precio.ToString("N2", new CultureInfo("es-AR"));
                 textBox4.Enabled = true;
             }
             else
@@ -148,7 +164,8 @@ namespace Carniceria
                     {
                         stockDisponible = (int)stockRow.stock_disponible;
                         hayStock = true;
-                    } else { hayStock = false; }
+                    }
+                    else { hayStock = false; }
                 }
 
                 if (!hayStock)
@@ -214,6 +231,7 @@ namespace Carniceria
             if (tipo == "C")
             {
                 dtDgvVenta.Rows.Add(
+                    producto.idProducto,
                     producto.nombre_producto,
                     producto.cantidad,
                     producto.kilos,
@@ -224,13 +242,14 @@ namespace Carniceria
             else
             {
                 dtDgvVenta.Rows.Add(
+                    producto.idProducto,
                     producto.nombre_producto,
                     producto.cantidad,
                     producto.kilos,
                     producto.precio_unitario,
                     producto.subtotal
                 );
-            } 
+            }
         }
         private bool validarCarrito(string cantidad, string producto, string precioUnitario)
         {
@@ -297,7 +316,7 @@ namespace Carniceria
             }
 
             Close();
-        } 
+        }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBox1.SelectedItem is Cliente clienteSeleccionado)
@@ -305,6 +324,29 @@ namespace Carniceria
                 lblNombre.Text = clienteSeleccionado.Nombre;
                 lblApellido.Text = clienteSeleccionado.Apellido;
                 lblInfo.Text = clienteSeleccionado.InfoRelevante;
+            }
+        }
+
+        private void dgvVenta_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            if (dgvVenta.Columns[e.ColumnIndex].Name == "Eliminar")
+            {
+                DataRowView rowView = dgvVenta.Rows[e.RowIndex].DataBoundItem as DataRowView;
+                if (rowView == null)
+                    return;
+
+                int idProducto = (int)rowView["IdProducto"];
+
+                // eliminar de la lista
+                var producto = productList.FirstOrDefault(x => x.idProducto == idProducto);
+                if (producto != null)
+                    productList.Remove(producto);
+
+                // eliminar del DataTable
+                rowView.Row.Delete();
             }
         }
     }
