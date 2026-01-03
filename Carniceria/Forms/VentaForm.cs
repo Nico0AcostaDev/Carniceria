@@ -34,6 +34,8 @@ namespace Carniceria
             dtDgvVenta.Columns.Add("Precio Unitario", typeof(decimal));
             dtDgvVenta.Columns.Add("Subtotal", typeof(decimal));
 
+            textBox4.Enabled = false; //no permite modificar el precio
+
             dgvProductos.DataSource = dtProductos;
             dgvVenta.DataSource = dtDgvVenta;
             AgregarBotonEliminar();
@@ -45,7 +47,7 @@ namespace Carniceria
             dgvProductos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvProductos.AllowUserToAddRows = false;
             dgvProductos.MultiSelect = false;
-            dgvProductos.Columns[0].Visible = false; 
+            dgvProductos.Columns[0].Visible = false;
             dgvVenta.Columns["IdProducto"].Visible = false;
             dgvProductos.ReadOnly = true;
             dgvVenta.ReadOnly = true;
@@ -103,37 +105,7 @@ namespace Carniceria
         private void VentaForm_Load(object sender, EventArgs e)
         {
             CargarGridAndCombo();
-        }
-        private void dgvProductos_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            DataGridViewRow row = dgvProductos.SelectedRows[0];
-
-            producto_id = Convert.ToInt32(row.Cells["Id_Productos"].Value);
-            tipo = row.Cells["Tipo"].Value.ToString();
-            textBox2.Text = row.Cells["Nombre Producto"].Value.ToString();
-
-            nombre_producto = row.Cells["Nombre Producto"].Value.ToString();
-            precio_producto = Convert.ToDecimal(row.Cells["Precio"].Value);
-
-            //C carne P producto
-            if (tipo == "C")
-            {
-                label8.Text = "Kilos";
-                label6.Text = "Precio por kilo";
-                textBox4.Text = "";
-                textBox4.Enabled = true;
-            }
-            else
-            {
-                label8.Text = "Cantidad";
-                label6.Text = "Valor Unitario";
-
-                decimal precio = Convert.ToDecimal(row.Cells["Precio"].Value);
-                textBox4.Text = precio.ToString("N2", new CultureInfo("es-AR"));
-                textBox4.Enabled = false;
-            }
-
-        }
+        } 
         private void button4_Click(object sender, EventArgs e)
         {
             limpiarControles();
@@ -150,7 +122,9 @@ namespace Carniceria
 
             if (!validarCarrito(textBox1.Text, textBox2.Text, textBox4.Text))
                 return;
+
             int stockDisponible = 0;
+
             if (tipo == "P") // solo consulto stock si es producto
             {
                 var stockResult = await _dbcontext.Procedures.sp_consultar_stock_productoAsync(producto_id);
@@ -227,29 +201,14 @@ namespace Carniceria
         public void addCompraToGrid(Producto producto)
         {
             productList.Add(producto);
-
-            if (tipo == "C")
-            {
-                dtDgvVenta.Rows.Add(
-                    producto.idProducto,
-                    producto.nombre_producto,
-                    producto.cantidad,
-                    producto.kilos,
-                    producto.precio_unitario.ToString("N2", new CultureInfo("es-AR")),
-                    producto.subtotal.ToString("N2", new CultureInfo("es-AR"))
-                );
-            }
-            else
-            {
-                dtDgvVenta.Rows.Add(
+            dtDgvVenta.Rows.Add(
                     producto.idProducto,
                     producto.nombre_producto,
                     producto.cantidad,
                     producto.kilos,
                     producto.precio_unitario,
                     producto.subtotal
-                );
-            }
+            );
         }
         private bool validarCarrito(string cantidad, string producto, string precioUnitario)
         {
@@ -347,6 +306,33 @@ namespace Carniceria
 
                 // eliminar del DataTable
                 rowView.Row.Delete();
+            }
+        }
+
+        private void dgvProductos_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return; // evita header
+
+            DataGridViewRow row = dgvProductos.Rows[e.RowIndex];
+
+            producto_id = Convert.ToInt32(row.Cells["Id_Productos"].Value);
+            tipo = row.Cells["Tipo"].Value.ToString();
+
+            nombre_producto = row.Cells["Nombre Producto"].Value.ToString();
+            textBox2.Text = nombre_producto;
+
+            decimal precio = Convert.ToDecimal(row.Cells["Precio"].Value);
+            textBox4.Text = precio.ToString("N2", new CultureInfo("es-AR"));
+
+            if (tipo == "C")
+            {
+                label8.Text = "Kilos";
+                label6.Text = "Precio por kilo";
+            }
+            else
+            {
+                label8.Text = "Cantidad";
+                label6.Text = "Valor Unitario";
             }
         }
     }
