@@ -103,6 +103,8 @@ namespace Carniceria
                 label8.Text = "Kilos";
                 label6.Text = "Precio por kilo";
                 textBox4.Text = "";
+                decimal precio = Convert.ToDecimal(row.Cells["Precio"].Value);
+                textBox4.Text = precio.ToString("N2", new CultureInfo("es-AR"));
                 textBox4.Enabled = true;
             }
             else
@@ -111,7 +113,7 @@ namespace Carniceria
                 label6.Text = "Valor Unitario";
 
                 decimal precio = Convert.ToDecimal(row.Cells["Precio"].Value);
-                textBox4.Text = precio.ToString("0.00", CultureInfo.InvariantCulture);
+                textBox4.Text = precio.ToString("N2", new CultureInfo("es-AR"));
                 textBox4.Enabled = false;
             }
 
@@ -133,7 +135,7 @@ namespace Carniceria
             if (!validarCarrito(textBox1.Text, textBox2.Text, textBox4.Text))
                 return;
             int stockDisponible = 0;
-            if (tipo == "P") // 👈 solo consulto stock si es producto
+            if (tipo == "P") // solo consulto stock si es producto
             {
                 var stockResult = await _dbcontext.Procedures.sp_consultar_stock_productoAsync(producto_id);
 
@@ -146,11 +148,7 @@ namespace Carniceria
                     {
                         stockDisponible = (int)stockRow.stock_disponible;
                         hayStock = true;
-                    }
-                    else
-                    {
-                        hayStock = false;
-                    }
+                    } else { hayStock = false; }
                 }
 
                 if (!hayStock)
@@ -160,7 +158,7 @@ namespace Carniceria
                 }
             }
 
-            producto.precio_unitario = Convert.ToDecimal(textBox4.Text.Replace(",", ""));
+            producto.precio_unitario = decimal.Parse(textBox4.Text, new CultureInfo("es-AR"));
 
             if (tipo == "C")
             {
@@ -212,7 +210,27 @@ namespace Carniceria
         public void addCompraToGrid(Producto producto)
         {
             productList.Add(producto);
-            dtDgvVenta.Rows.Add(producto.nombre_producto, producto.cantidad, producto.kilos, producto.precio_unitario, producto.subtotal);
+
+            if (tipo == "C")
+            {
+                dtDgvVenta.Rows.Add(
+                    producto.nombre_producto,
+                    producto.cantidad,
+                    producto.kilos,
+                    producto.precio_unitario.ToString("N2", new CultureInfo("es-AR")),
+                    producto.subtotal.ToString("N2", new CultureInfo("es-AR"))
+                );
+            }
+            else
+            {
+                dtDgvVenta.Rows.Add(
+                    producto.nombre_producto,
+                    producto.cantidad,
+                    producto.kilos,
+                    producto.precio_unitario,
+                    producto.subtotal
+                );
+            } 
         }
         private bool validarCarrito(string cantidad, string producto, string precioUnitario)
         {
@@ -279,48 +297,7 @@ namespace Carniceria
             }
 
             Close();
-        }
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            int cursorPosition = textBox1.SelectionStart;
-
-            string text = textBox1.Text.Replace(",", "");
-            if (text.Length > 4)
-                text = text.Substring(0, 4);
-            if (text.Length == 4)
-            {
-                text = text.Insert(1, ",");
-            }
-            else if (text.Length == 5)
-            {
-                text = text.Insert(2, ",");
-            }
-
-            textBox1.Text = text;
-
-            textBox1.SelectionStart = cursorPosition + (textBox1.Text.Length - text.Length);
-        }
-        private void textBox4_TextChanged(object sender, EventArgs e)
-        {
-            int cursorPosition = textBox4.SelectionStart;
-
-            string text = textBox4.Text.Replace(",", "");
-            if (text.Length > 4)
-                text = text.Substring(0, 4);
-            if (text.Length == 4)
-            {
-                text = text.Insert(1, ",");
-            }
-            else if (text.Length == 5)
-            {
-                text = text.Insert(2, ",");
-            }
-
-            textBox4.Text = text;
-
-            textBox4.SelectionStart = cursorPosition + (textBox4.Text.Length - text.Length);
-        }
-
+        } 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBox1.SelectedItem is Cliente clienteSeleccionado)
