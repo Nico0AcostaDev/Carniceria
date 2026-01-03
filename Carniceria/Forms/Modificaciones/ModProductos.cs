@@ -47,11 +47,6 @@ namespace Carniceria
             dgvProductos.AllowUserToResizeRows = false;
         }
 
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private async void CargarGridAndCombo()
         {
             var stockProductos = await _dbcontext.Procedures.sp_obtener_stock_con_precioAsync();
@@ -66,21 +61,7 @@ namespace Carniceria
         {
             CargarGridAndCombo();
         }
-
-        private void dgvProductos_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0)
-                return;
-
-            DataGridViewRow row = dgvProductos.Rows[e.RowIndex];
-
-            descripcionTxt.Text = row.Cells["Nombre Producto"].Value?.ToString();
-            cantidadTxt.Text = row.Cells["Cantidad"].Value?.ToString();
-            lblUltActualizacion.Text = row.Cells["Fecha Actualización"].Value?.ToString();
-            precioTxt.Text = Convert.ToDecimal(row.Cells["Precio Unitario"].Value).ToString("0.00");
-            estadoTxt.Text = row.Cells["Estado"].Value?.ToString();
-        }
-
+         
         private void btnDescripcionHide_Click(object sender, EventArgs e)
         {
             descripcionTxt.Enabled = !descripcionTxt.Enabled;
@@ -145,7 +126,7 @@ namespace Carniceria
                 MessageBox.Show("Debe seleccionar un producto para editar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-             
+
             DataGridViewRow filaSeleccionada = dgvProductos.SelectedRows[0];
             int id_producto = Convert.ToInt32(filaSeleccionada.Cells["ID Producto"].Value);
 
@@ -153,14 +134,14 @@ namespace Carniceria
             decimal cantidadOriginal = Convert.ToDecimal(filaSeleccionada.Cells["Cantidad"].Value);
             decimal precioOriginal = Convert.ToDecimal(filaSeleccionada.Cells["Precio Unitario"].Value);
             string estadoOriginal = filaSeleccionada.Cells["Estado"].Value?.ToString();
-             
+
             string descripcionParam = descripcionTxt.Text != descripcionOriginal ? descripcionTxt.Text : null;
             decimal? cantidadParam = cantidad != cantidadOriginal ? cantidad : (decimal?)null;
             decimal? precioParam = Convert.ToDecimal(precioTxt.Text) != precioOriginal ? Convert.ToDecimal(precioTxt.Text) : (decimal?)null;
             string estadoParam = estado != estadoOriginal ? estado : null;
 
             try
-            { 
+            {
                 await _dbcontext.Procedures.sp_editar_productoAsync(
                     id_producto,
                     descripcionParam,
@@ -168,7 +149,7 @@ namespace Carniceria
                     precioParam,
                     estadoParam
                 );
-                 
+
                 MessageBox.Show("Producto actualizado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 dtvProductos.Clear();
@@ -176,9 +157,30 @@ namespace Carniceria
                 disabledTextbox();
             }
             catch (Exception ex)
-            { 
+            {
                 MessageBox.Show($"Ocurrió un error al actualizar el producto:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void dgvProductos_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            DataGridViewRow row = dgvProductos.Rows[e.RowIndex];
+
+            descripcionTxt.Text = row.Cells["Nombre Producto"].Value?.ToString();
+            cantidadTxt.Text = row.Cells["Cantidad"].Value?.ToString();
+
+            precioTxt.Text = Convert.ToDecimal(
+                row.Cells["Precio Unitario"].Value
+            ).ToString("0.00");
+
+            lblUltActualizacion.Text = Convert.ToDateTime(
+                row.Cells["Fecha Actualización"].Value
+            ).ToString("dd/MM/yyyy HH:mm");
+
+            estadoTxt.Text = row.Cells["Estado"].Value?.ToString();
         }
     }
 }

@@ -48,6 +48,8 @@
             lblNombre = new Label();
             lblApellido = new Label();
             lblInfo = new Label();
+            label7 = new Label();
+            txtboxBuscarProducto = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvVenta).BeginInit();
             panel1.SuspendLayout();
@@ -76,7 +78,7 @@
             // dgvProductos
             // 
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvProductos.Location = new Point(12, 160);
+            dgvProductos.Location = new Point(12, 193);
             dgvProductos.MultiSelect = false;
             dgvProductos.Name = "dgvProductos";
             dgvProductos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -216,7 +218,7 @@
             // btnAceptar
             // 
             btnAceptar.Font = new Font("Segoe UI", 12F);
-            btnAceptar.Location = new Point(817, 457);
+            btnAceptar.Location = new Point(817, 490);
             btnAceptar.Name = "btnAceptar";
             btnAceptar.Size = new Size(135, 38);
             btnAceptar.TabIndex = 24;
@@ -251,12 +253,31 @@
             lblInfo.TabIndex = 28;
             lblInfo.Text = "label10";
             // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(12, 166);
+            label7.Name = "label7";
+            label7.Size = new Size(107, 15);
+            label7.TabIndex = 29;
+            label7.Text = "busca un producto";
+            // 
+            // txtboxBuscarProducto
+            // 
+            txtboxBuscarProducto.Location = new Point(134, 163);
+            txtboxBuscarProducto.Name = "txtboxBuscarProducto";
+            txtboxBuscarProducto.Size = new Size(175, 23);
+            txtboxBuscarProducto.TabIndex = 30;
+            txtboxBuscarProducto.TextChanged += txtboxBuscarProducto_TextChanged;
+            // 
             // VentaForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.GradientInactiveCaption;
-            ClientSize = new Size(964, 499);
+            ClientSize = new Size(964, 540);
+            Controls.Add(txtboxBuscarProducto);
+            Controls.Add(label7);
             Controls.Add(lblInfo);
             Controls.Add(lblApellido);
             Controls.Add(lblNombre);
@@ -303,5 +324,7 @@
         private Label lblNombre;
         private Label lblApellido;
         private Label lblInfo;
+        private Label label7;
+        private TextBox txtboxBuscarProducto;
     }
 }

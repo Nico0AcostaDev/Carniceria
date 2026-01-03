@@ -105,7 +105,7 @@ namespace Carniceria
         private void VentaForm_Load(object sender, EventArgs e)
         {
             CargarGridAndCombo();
-        } 
+        }
         private void button4_Click(object sender, EventArgs e)
         {
             limpiarControles();
@@ -333,6 +333,22 @@ namespace Carniceria
             {
                 label8.Text = "Cantidad";
                 label6.Text = "Valor Unitario";
+            }
+        }
+
+        private void txtboxBuscarProducto_TextChanged(object sender, EventArgs e)
+        {
+            string texto = txtboxBuscarProducto.Text.Trim().Replace("'", "''");
+
+            DataView dv = dtProductos.DefaultView;
+
+            if (string.IsNullOrEmpty(texto))
+            {
+                dv.RowFilter = "";
+            }
+            else
+            {
+                dv.RowFilter = $"[Nombre Producto] LIKE '%{texto}%'";
             }
         }
     }

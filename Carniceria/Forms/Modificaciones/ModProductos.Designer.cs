@@ -40,7 +40,6 @@
             cantidadTxt = new TextBox();
             estadoTxt = new TextBox();
             lblUltActualizacion = new Label();
-            label5 = new Label();
             precioTxt = new TextBox();
             btnEstadoHide = new Button();
             btnCantidadHide = new Button();
@@ -56,7 +55,7 @@
             dgvProductos.Name = "dgvProductos";
             dgvProductos.Size = new Size(517, 359);
             dgvProductos.TabIndex = 0;
-            dgvProductos.CellContentClick += dgvProductos_CellContentClick;
+            dgvProductos.CellClick += dgvProductos_CellClick;
             // 
             // Modificaciones
             // 
@@ -149,17 +148,6 @@
             lblUltActualizacion.Size = new Size(0, 21);
             lblUltActualizacion.TabIndex = 11;
             // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 12F);
-            label5.Location = new Point(557, 189);
-            label5.Name = "label5";
-            label5.Size = new Size(53, 21);
-            label5.TabIndex = 12;
-            label5.Text = "Precio";
-            label5.Click += label5_Click;
-            // 
             // precioTxt
             // 
             precioTxt.Location = new Point(707, 189);
@@ -207,7 +195,7 @@
             btnDescripcionHide.UseVisualStyleBackColor = true;
             btnDescripcionHide.Click += btnDescripcionHide_Click;
             // 
-            // ModificacionesForm
+            // ModProductos
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -218,7 +206,6 @@
             Controls.Add(btnCantidadHide);
             Controls.Add(btnEstadoHide);
             Controls.Add(precioTxt);
-            Controls.Add(label5);
             Controls.Add(lblUltActualizacion);
             Controls.Add(estadoTxt);
             Controls.Add(cantidadTxt);
@@ -234,7 +221,7 @@
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
-            Name = "ModificacionesForm";
+            Name = "ModProductos";
             Text = "Modificaciones";
             Load += ModificacionesForm_Load;
             ((System.ComponentModel.ISupportInitialize)dgvProductos).EndInit();
@@ -255,7 +242,6 @@
         private TextBox cantidadTxt;
         private TextBox estadoTxt;
         private Label lblUltActualizacion;
-        private Label label5;
         private TextBox precioTxt;
         private Button btnEstadoHide;
         private Button btnCantidadHide;
