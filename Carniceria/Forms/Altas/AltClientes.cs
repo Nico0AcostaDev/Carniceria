@@ -9,7 +9,7 @@ namespace Carniceria.Forms.Altas
             _dbcontext = dbcontext;
             InitializeComponent();
         }
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(Nombretxt.Text))
             {
@@ -31,15 +31,14 @@ namespace Carniceria.Forms.Altas
 
             try
             {
-                _dbcontext.Procedures.sp_insertar_clienteAsync(
-                  Nombretxt.Text,
-                  Apellidotxt.Text,
-                  Telefonotxt.Text,
-                  Direcciontxt.Text,
-                  Emailtxt.Text,
-                  Infotxt.Text
-
-              );
+                await _dbcontext.Procedures.sp_insertar_clienteAsync(
+                      Nombretxt.Text,
+                      Apellidotxt.Text,
+                      Telefonotxt.Text,
+                      Direcciontxt.Text,
+                      Emailtxt.Text,
+                      Infotxt.Text
+                );
 
                 MessageBox.Show("Usuario registrado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.Close();
