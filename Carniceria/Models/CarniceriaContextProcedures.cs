@@ -124,7 +124,7 @@ namespace Carniceria.Models
             return _;
         }
 
-        public virtual async Task<int> sp_editar_productoAsync(int? id_producto, string nombre_producto, decimal? cantidad, decimal? precio, string cod_estado, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        public virtual async Task<int> sp_editar_productoAsync(int? id_producto, string descripcion, decimal? cantidad, decimal? precio, string cod_estado, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
         {
             var parameterreturnValue = new SqlParameter
             {
@@ -143,9 +143,9 @@ namespace Carniceria.Models
                 },
                 new SqlParameter
                 {
-                    ParameterName = "nombre_producto",
+                    ParameterName = "descripcion",
                     Size = 255,
-                    Value = nombre_producto ?? Convert.DBNull,
+                    Value = descripcion ?? Convert.DBNull,
                     SqlDbType = System.Data.SqlDbType.VarChar,
                 },
                 new SqlParameter
@@ -173,7 +173,7 @@ namespace Carniceria.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.Database.ExecuteSqlRawAsync("EXEC @returnValue = [dbo].[sp_editar_producto] @id_producto = @id_producto, @nombre_producto = @nombre_producto, @cantidad = @cantidad, @precio = @precio, @cod_estado = @cod_estado", sqlParameters, cancellationToken);
+            var _ = await _context.Database.ExecuteSqlRawAsync("EXEC @returnValue = [dbo].[sp_editar_producto] @id_producto = @id_producto, @descripcion = @descripcion, @cantidad = @cantidad, @precio = @precio, @cod_estado = @cod_estado", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 

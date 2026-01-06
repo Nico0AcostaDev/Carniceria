@@ -14,8 +14,10 @@ namespace Carniceria.Models
         public int? cantidad { get; set; }
         [Column("precio", TypeName = "decimal(10,2)")]
         public decimal? precio { get; set; }
-        public DateTime fecha_actualizacion { get; set; }
+        public DateTime? fecha_actualizacion { get; set; }
         [StringLength(1)]
         public string cod_estado { get; set; }
+        [StringLength(1)]
+        public string tipo { get; set; }
     }
 }
