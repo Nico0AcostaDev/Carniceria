@@ -154,7 +154,11 @@ namespace Carniceria
 
             int idDeuda = Convert.ToInt32(row.Cells["Id_Deuda"].Value);
 
-            decimal pago = Convert.ToDecimal(textBoxPago.Text + ".00", CultureInfo.InvariantCulture);
+            decimal pago = decimal.Parse(
+    textBoxPago.Text,
+    NumberStyles.Number,
+    new CultureInfo("es-AR")
+);
 
             if (pago == 0m)
             {
